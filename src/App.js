@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import style from 'semantic-ui-css/semantic.min.css';
 
 class App extends Component {
   render() {
