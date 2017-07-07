@@ -13,23 +13,25 @@ function formatUrl(path) {
 
 export default function callApi(req) {
   const url = formatUrl(req.endpoint);
-  console.log(server);
-  console.log(url);
   console.log(req);
   return fetch(url, {
     mode: 'cors',
     method: req.method,
     headers: {
-      'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json',
     },
-    body: req.body
+    body: JSON.stringify(req.body)
   }).then((response) => {
-    console.log(response);
       if(!response.ok) {
         throw Error(response.statusText);
       }
       return response.json();
+    }).then((data) => {
+      console.log(data);
+      if(data.error) {
+        throw Error(data.error);
+      }
+      return data;
     }).catch((err)=> {
       console.log(err);
     });
