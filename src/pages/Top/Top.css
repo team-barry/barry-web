@@ -17,7 +17,7 @@ section.main h1 {
   font-size: 8vh;
 }
 
-footer {
+section.footer {
   display: flex;
   justify-content: center;
   align-items: center;
