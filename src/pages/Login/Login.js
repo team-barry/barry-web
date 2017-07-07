@@ -1,9 +1,28 @@
 import React, {Component} from 'react';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
+import {withRouter} from 'react-router';
 import {Container, Form, Button} from 'semantic-ui-react';
+import * as authActions from 'redux/modules/auth';
 import {Header} from 'components';
 import styles from './Login.css';
 
-export default class Login extends Component {
+class Login extends Component {
+  static PropTypes = {
+    user: PropTypes.object,
+    login: PropTypes.func
+  };
+  
+  hundleSubmit = (event) => {
+    event.preventDefault();
+    const payload = {
+      email: this.refs.email.value,
+      password: this.refs.password.value
+    };
+    this.props.login(payload);
+  };
+  
   render() {
     return (
       <div className="page">
@@ -13,14 +32,19 @@ export default class Login extends Component {
             <h1>ログイン</h1>
             <Form>
               <Form.Field>
-                <label>ユーザー名</label>
-                <input placeholder='User Name' />
+                <label>Eメール</label>
+                <input
+                  ref="email"
+                  placeholder='Input Email Address' />
               </Form.Field>
               <Form.Field>
                 <label>パスワード</label>
-                <input placeholder='Password' />
+                <input
+                  ref="password"
+                  type="password"
+                  placeholder='Input Password' />
               </Form.Field>
-              <Button type='submit'>ログイン</Button>
+              <Button type='submit' onClick={this.hundleSubmit}>ログイン</Button>
             </Form>
           </div>
         </Container>
@@ -28,3 +52,17 @@ export default class Login extends Component {
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user: state
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    ...bindActionCreators(authActions, dispatch)
+  };
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
