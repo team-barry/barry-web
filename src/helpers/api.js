@@ -32,7 +32,5 @@ export default function callApi(req) {
         throw Error(data.error);
       }
       return data;
-    }).catch((err)=> {
-      console.log(err);
     });
 };
