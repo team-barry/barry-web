@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
+import {Provider} from 'react-redux';
+import myStore from './redux/store';
+import RoutePages from './routes';
 import style from 'semantic-ui-css/semantic.min.css';
-import RoutePages from 'routes';
 
+const store = myStore();
 class App extends Component {
   render() {
     return (
-      <div className="App" style={style}>
-        <RoutePages />
-      </div>
+      <Provider store={store}>
+        <div className="App" style={style}>
+          <RoutePages />
+        </div>
+      </Provider>
     );
   }
 }

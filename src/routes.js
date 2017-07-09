@@ -1,5 +1,6 @@
 import React from 'react';
 import {TopPage, LoginPage, SignupPage, UserPage} from './pages';
+import {PrivateRoute, GuestRoute} from './containers';
 import {
   BrowserRouter,
   Route,
@@ -9,10 +10,10 @@ import {
 const routes = () => (
   <BrowserRouter>
     <Switch>
-      <Route path="/user/:id" component={UserPage} />
-      <Route path="/login" component={LoginPage} />
-      <Route path="/signup" component={SignupPage} />
-      <Route component={TopPage} />
+      <PrivateRoute exact path="/user" component={UserPage} />
+      <GuestRoute exact path="/login" component={LoginPage} />
+      <GuestRoute exact path="/signup" component={SignupPage} />
+      <Route path="/" component={TopPage} />
     </Switch>
   </BrowserRouter>
 );

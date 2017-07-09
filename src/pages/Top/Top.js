@@ -13,9 +13,11 @@ export default class Top extends Component {
           <h1 className="title">TRACK</h1>
           <h1 className="title">EVERYWHERE</h1>
         </section>
-        <footer>
-          <Button as={Link} to="/signup" color="orange" size="massive">START TRACK</Button>
-        </footer>
+        <section className="footer">
+          <Button as={Link} to="/signup" color="orange" size="massive">
+            START TRACK
+          </Button>
+        </section>
       </div>
     );
   }
