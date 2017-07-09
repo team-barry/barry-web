@@ -1,15 +1,16 @@
 import {Record} from 'immutable';
 
 const UserRecord = Record({
-  id: null,
+  user_id: null,
   name: null,
-  token: null,
-  loggingIn: false,
+  email: null,
+  access_token: null,
+  token_type: null,
 });
 
 export default class User extends UserRecord{
   isLogin() {
-    if(this.id && this.token) {
+    if(this.user_id && this.access_token) {
       return true;
     };
     return false;
