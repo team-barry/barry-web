@@ -1,5 +1,5 @@
 import auth from './modules/auth';
 
-export const reducers = [
+export const reducers = {
   auth
-];
+};

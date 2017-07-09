@@ -11,6 +11,7 @@ import styles from './Login.css';
 class Login extends Component {
   static PropTypes = {
     user: PropTypes.object,
+    message: PropTypes.object,
     login: PropTypes.func
   };
   
@@ -55,7 +56,8 @@ class Login extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state
+    user: state.auth.user,
+    message: state.auth.message
   };
 }
 
