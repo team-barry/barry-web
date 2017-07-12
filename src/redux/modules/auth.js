@@ -1,6 +1,7 @@
 import {call, put, takeLatest, all} from 'redux-saga/effects';
 import {User, Message} from 'redux/models';
-import api from 'helpers/api';
+import API from 'helpers/api';
+import * as storage from 'helpers/storage';
 
 const LOGIN = 'barry/auth/LOGIN';
 const LOGIN_SUCCESS = 'barry/auth/LOGIN_SUCCESS';
@@ -8,6 +9,9 @@ const LOGIN_FAIL = 'barry/auth/LOGIN_FAIL';
 const SIGNUP = 'barry/auth/SIGNUP';
 const SIGNUP_SUCCESS = 'barry/auth/SIGNUP_SUCCESS';
 const SIGNUP_FAIL = 'barry/auth/SIGNUP_FAIL';
+const AUTH_USER = 'barry/auth/AUTH_USER';
+const AUTH_USER_SUCCESS =  'barry/auth/AUTH_USER_SUCCESS';
+const AUTH_USER_FAIL =  'barry/auth/AUTH_USER_FAIL';
 
 const initialState = {
   user: new User(),
@@ -20,7 +24,10 @@ export default function reducer(state = initialState, action = {}) {
       return state;
     case LOGIN_SUCCESS:
       return {
-        user: new User(action.user),
+        user: new User({
+          ...action.user,
+          is_valid: true
+        }),
         message: state.message
       };
     case LOGIN_FAIL:
@@ -32,7 +39,10 @@ export default function reducer(state = initialState, action = {}) {
       return state;
     case SIGNUP_SUCCESS:
       return {
-        user: new User(action.user),
+        user: new User({
+          ...action.user,
+          is_valid: true
+        }),
         message: state.message
       };
     case SIGNUP_FAIL:
@@ -40,6 +50,21 @@ export default function reducer(state = initialState, action = {}) {
         user: state.user,
         message: state.message.set("error", action.error)
       };
+    case AUTH_USER:
+      return state;
+    case AUTH_USER_SUCCESS:
+      return {
+        user: new User({
+          ...action.user,
+          is_valid: true
+        }),
+        message: state.message
+      }
+    case AUTH_USER_FAIL:
+      return {
+        user: state.user,
+        message: state.message
+      }
     default:
       return state;
   }
@@ -59,15 +84,21 @@ export function signup(request) {
   };
 };
 
+export function authUser() {
+  return {
+    type: AUTH_USER,
+  };
+}
+
 function *hundleLogin(action) {
   console.log("hundle login called");
   try {
     const req = {
       endpoint: "login",
-      method: 'POST',
       body: action.payload
     }
-    const user = yield call(api, req);
+    const user = yield call(API.post, req);
+    storage.setAuth(user);
     yield put({type: LOGIN_SUCCESS, user: user});
    } catch (e) {
      console.log(e);
@@ -80,12 +111,12 @@ function *hundleSignup(action) {
   try {
     const req = {
       endpoint: "users",
-      method: 'POST',
       body: {
         user: action.payload
       }
     };
-    const user = yield call(api, req);
+    const user = yield call(API.post, req);
+    storage.setAuth(user);
     yield put({type: SIGNUP_SUCCESS, user: user});
   } catch(e) {
     console.log(e);
@@ -93,9 +124,27 @@ function *hundleSignup(action) {
   }
 }
 
+function *hundleAuthUser(action) {
+  console.log("hundle auth user called");
+  try {
+    const req = {
+      endpoint: "login",
+      auth: storage.getAuth()
+    };
+    const user = yield call(API.getWithAuth, req);
+    
+    yield put({type: AUTH_USER_SUCCESS, user: user});
+  } catch(e) {
+    console.log(e);
+    storage.removeAuth();
+    yield put({type: AUTH_USER_FAIL, error: e.message});
+  }
+}
+
 export function *authSagas() {
   yield all([
     takeLatest(LOGIN, hundleLogin),
-    takeLatest(SIGNUP, hundleSignup)
+    takeLatest(SIGNUP, hundleSignup),
+    takeLatest(AUTH_USER, hundleAuthUser)
   ]);
 }
