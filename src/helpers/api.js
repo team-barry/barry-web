@@ -11,17 +11,31 @@ function formatUrl(path) {
   return 'http://' + server.host + ':' + server.port + '/' + server.ver + adjustedPath;
 }
 
-export default function callApi(req) {
-  const url = formatUrl(req.endpoint);
-  console.log(req);
-  return fetch(url, {
+function makeHeaders(method) {
+  return {
     mode: 'cors',
-    method: req.method,
+    method: method,
     headers: {
       'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(req.body)
-  }).then((response) => {
+    }
+  }
+}
+
+function makeAuthHeaders(method, auth) {
+  const authorization = `${auth.access_token}`
+  return {
+    mode: 'cors',
+    method: method,
+    headers: {
+      'Authorization': authorization,
+      'Content-Type': 'application/json',
+    }
+  }
+}
+
+function fetchAPI(url, request) {
+  return fetch(url, request)
+    .then((response) => {
       if(!response.ok) {
         throw Error(response.statusText);
       }
@@ -33,4 +47,48 @@ export default function callApi(req) {
       }
       return data;
     });
+};
+
+
+// API class request following json format
+// params {
+//   endpoint: string of your api's endpoint,
+//   body: json objects of your request,
+//   auth: string of auth token if you want to authorization api method
+// }
+export default class API {
+  static get(params) {
+    const url = formatUrl(params.endpoint);
+    const request = {
+      ...makeHeaders('GET'),
+    }
+    return fetchAPI(url, request);
+  };
+  
+  static post(params) {
+    const url = formatUrl(params.endpoint);
+    const request = {
+      ...makeHeaders('POST'),
+      body: JSON.stringify(params.body)
+    }
+    return fetchAPI(url, request);
+  };
+  
+  static getWithAuth(params) {
+    const url = formatUrl(params.endpoint);
+    const request = {
+      ...makeAuthHeaders('GET', params.auth)
+    }
+    console.log("request", request);
+    return fetchAPI(url, request);
+  }
+  
+  static postWithAuth(params) {
+    const url = formatUrl(params.endpoint);
+    const request = {
+      ...makeAuthHeaders('GET', params.auth),
+      body: JSON.stringify(params.body)
+    }
+    return fetchAPI(url, request);
+  }
 };
