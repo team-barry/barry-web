@@ -1,35 +1,43 @@
 import React, {Component} from 'react';
+import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {withRouter, Route, Redirect} from 'react-router';
+import {withRouter, Route} from 'react-router';
+import * as authActions from 'redux/modules/auth';
 
 class Private extends Component {
   static PropTypes = {
     user: PropTypes.object.isRequired,
-    router: PropTypes.object.isRequired
+    history: PropTypes.object.isRequired
   };
+  
+  componentWillMount() {
+    this.isAuthenticated(this.props);
+  }
 
-  isAuthenticated(user) {
-    // TODO Local Strage
-    if(user.isLogin()) {
-      return true;
+  componentWillUpdate(nextProps) {
+    this.isAuthenticated(nextProps);
+  }
+
+  isAuthenticated(props) {
+    const user = props.user;
+    if(user.needAuth()) {
+      return this.props.authUser();
     }
-    return false;
+    if(!user.isLogin()) {
+      props.history.replace('/login');
+    }
   }
   
   render() {
-    if(this.isAuthenticated(this.props.user)) {
+    if(this.props.user.needAuth()) {
       return (
-        <Route {...this.props} />
-      )
-    } else {
-      return (
-        <Redirect to={{
-          pathname: '/login',
-          state: { from: this.props.location }
-        }} />
+        <div>Loading...</div>
       )
     }
+    return (
+      <Route {...this.props} />
+    )
   }
 }
 
@@ -38,4 +46,11 @@ const mapStateToProps = (state) => {
     user: state.auth.user
   };
 }
-export default withRouter(connect(mapStateToProps)(Private));
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    ...bindActionCreators(authActions, dispatch)
+  };
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Private));

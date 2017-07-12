@@ -11,7 +11,14 @@ import styles from './Signup.css';
 class Signup extends Component {
   static PropTypes = {
     user: PropTypes.object,
-    signup: PropTypes.func
+    signup: PropTypes.func,
+    history: PropTypes.object,
+  }
+  
+  componentWillUpdate(nextProps) {
+    if(nextProps.user.isValid()) {
+      nextProps.history.push("/user");
+    };
   }
   
   hundleSubmit = (event) => {
@@ -78,8 +85,8 @@ class Signup extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.auth,
-    message: state.message
+    user: state.auth.user,
+    message: state.auth.message
   };
 };
 
