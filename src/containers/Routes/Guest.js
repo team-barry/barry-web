@@ -30,7 +30,7 @@ class Guest extends Component {
   }
   
   render() {
-    if(this.props.user.needAuth()) {
+    if(this.props.user.isLogging()) {
       return (
         <div>Loading...</div>
       )
