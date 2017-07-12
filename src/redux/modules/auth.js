@@ -32,7 +32,7 @@ export default function reducer(state = initialState, action = {}) {
       };
     case LOGIN_FAIL:
       return {
-        user: state.user,
+        user: new User(),
         message: state.message.set("error", action.error)
       };
     case SIGNUP:
@@ -47,22 +47,29 @@ export default function reducer(state = initialState, action = {}) {
       };
     case SIGNUP_FAIL:
       return {
-        user: state.user,
+        user: new User(),
         message: state.message.set("error", action.error)
       };
     case AUTH_USER:
-      return state;
+      return {
+        user: new User({
+          ...state.user,
+          is_logging: true
+        }),
+        message: state.message
+      };
     case AUTH_USER_SUCCESS:
       return {
         user: new User({
           ...action.user,
-          is_valid: true
+          is_valid: true,
+          is_logging: false
         }),
         message: state.message
       }
     case AUTH_USER_FAIL:
       return {
-        user: state.user,
+        user: new User(),
         message: state.message
       }
     default:

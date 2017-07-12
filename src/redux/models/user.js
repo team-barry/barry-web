@@ -8,6 +8,7 @@ const UserRecord = Record({
   access_token: null,
   token_type: null,
   is_valid: false,
+  is_logging: false
 });
 
 export default class User extends UserRecord{
@@ -27,7 +28,11 @@ export default class User extends UserRecord{
   }
   
   needAuth() {
-    return !this.isValid() && this.hasAuthInLocalStorage();
+    return !this.isValid() && !this.isLogging() && this.hasAuthInLocalStorage();
+  }
+  
+  isLogging() {
+    return this.is_logging;
   }
   
   isValid() {
