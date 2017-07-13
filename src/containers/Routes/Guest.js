@@ -24,6 +24,9 @@ class Guest extends Component {
     if(user.needAuth()) {
       return this.props.authUser();
     }
+    if(user.isLogging()) {
+      return;
+    }
     if(user.isLogin()) {
       props.history.replace('/user');
     }
