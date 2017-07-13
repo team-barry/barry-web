@@ -28,7 +28,7 @@ class Private extends Component {
       return;
     }
     if(!user.isLogin()) {
-      props.history.replace('/login');
+      props.history.replace('/');
     }
   }
   
