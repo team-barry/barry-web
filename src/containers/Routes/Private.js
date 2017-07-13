@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {withRouter, Route} from 'react-router';
 import * as authActions from 'redux/modules/auth';
+import * as mapActions from 'redux/modules/map';
 
 class Private extends Component {
   static PropTypes = {
@@ -13,6 +14,7 @@ class Private extends Component {
   
   componentWillMount() {
     this.isAuthenticated(this.props);
+    this.getCurrentLocation(this.props);
   }
 
   componentWillUpdate(nextProps) {
@@ -32,8 +34,14 @@ class Private extends Component {
     }
   }
   
+  getCurrentLocation(props) {
+    if(!props.viewport.hasLocation()) {
+      return props.getCurrentLocation();
+    }
+  }
+  
   render() {
-    if(this.props.user.isLogging()) {
+    if(this.props.user.isLogging() || !this.props.viewport.hasLocation()) {
       return (
         <div>Loading...</div>
       )
@@ -46,13 +54,15 @@ class Private extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.auth.user
+    user: state.auth.user,
+    viewport: state.map.viewport
   };
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    ...bindActionCreators(authActions, dispatch)
+    ...bindActionCreators(authActions, dispatch),
+    ...bindActionCreators(mapActions, dispatch)
   };
 }
 
