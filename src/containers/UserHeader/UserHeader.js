@@ -20,7 +20,7 @@ class UserHeader extends Component {
   
   render() {
     return (
-      <Menu size="large">
+      <Menu size="large" compact={true}>
         <Container>
           <Menu.Item as={Link} to="/user" name="Barry" />
           
