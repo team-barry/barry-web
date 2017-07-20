@@ -9,10 +9,11 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {withRouter} from 'react-router';
-import ReactMapboxGl from 'react-mapbox-gl';
-import styles from './UserMap.css';
+import ReactMapboxGl, {Marker} from 'react-mapbox-gl';
 import FixedButton from 'components/Buttons/FixedButton/FixedButton';
 import * as mapActions from 'redux/modules/map';
+import styles from './UserMap.css';
+import pulseCircleStyles from './PulseCircle.css';
 
 const token = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 const Map = ReactMapboxGl({
@@ -43,6 +44,11 @@ class UserMap extends Component {
           zoom={this.props.zoom}
           attributionControl={false}
         >
+          <Marker
+            coordinates={this.props.position}
+          >
+            <div className="pulseCircle" style={pulseCircleStyles} />
+          </Marker>
         </Map>
         <FixedButton onClick={this.hundleToMoveCurrentLocation} />
       </div>
