@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import {withRouter, Route} from 'react-router';
 import * as authActions from 'redux/modules/auth';
 import * as mapActions from 'redux/modules/map';
+import Loading from 'pages/Loading/Loading';
 
 class Private extends Component {
   static PropTypes = {
@@ -43,7 +44,7 @@ class Private extends Component {
   render() {
     if(this.props.user.isLogging() || !this.props.viewport.hasLocation()) {
       return (
-        <div>Loading...</div>
+        <Loading />
       )
     }
     return (

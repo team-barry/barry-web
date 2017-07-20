@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {withRouter, Route} from 'react-router';
 import * as authActions from 'redux/modules/auth';
+import Loading from 'pages/Loading/Loading';
 
 class Guest extends Component {
   static PropTypes = {
@@ -35,7 +36,7 @@ class Guest extends Component {
   render() {
     if(this.props.user.isLogging()) {
       return (
-        <div>Loading...</div>
+        <Loading />
       )
     }
     return (

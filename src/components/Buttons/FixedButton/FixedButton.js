@@ -4,7 +4,7 @@ import styles from './FixedButton.css';
 
 const FixedButton = (options) => {
   return (
-    <Button circular color='orange' icon='location arrow' style={styles} {...options} />
+    <Button circular color='orange' icon='location arrow' style={styles} className="fixedButton" {...options} />
   );
 }
 
