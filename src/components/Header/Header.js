@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom';
 export default class Header extends Component {
   render() {
     return (
-      <Menu size="large">
+      <Menu size="large" compact={true}>
         <Container>
           <Menu.Item as={Link} to="/" name='Barry' />
           

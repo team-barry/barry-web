@@ -9,6 +9,9 @@ const LOGIN_FAIL = 'barry/auth/LOGIN_FAIL';
 const SIGNUP = 'barry/auth/SIGNUP';
 const SIGNUP_SUCCESS = 'barry/auth/SIGNUP_SUCCESS';
 const SIGNUP_FAIL = 'barry/auth/SIGNUP_FAIL';
+const SIGNOUT = 'barry/auth/SIGNOUT';
+const SIGNOUT_SUCCESS = 'barry/auth/SIGNOUT_SUCCESS';
+const SIGNOUT_FAIL = 'barry/auth/SIGNOUT_FAIL';
 const AUTH_USER = 'barry/auth/AUTH_USER';
 const AUTH_USER_SUCCESS =  'barry/auth/AUTH_USER_SUCCESS';
 const AUTH_USER_FAIL =  'barry/auth/AUTH_USER_FAIL';
@@ -50,6 +53,18 @@ export default function reducer(state = initialState, action = {}) {
         user: new User(),
         message: state.message.set("error", action.error)
       };
+    case SIGNOUT:
+      return state;
+    case SIGNOUT_SUCCESS:
+      return {
+        user: new User(),
+        message: state.message
+      }
+    case SIGNOUT_FAIL:
+      return {
+        user: state.user,
+        message: state.message.set("error", action.error)
+      }
     case AUTH_USER:
       return {
         user: new User({
@@ -70,7 +85,7 @@ export default function reducer(state = initialState, action = {}) {
     case AUTH_USER_FAIL:
       return {
         user: new User(),
-        message: state.message
+        message: state.message.set("error", action.error)
       }
     default:
       return state;
@@ -90,6 +105,12 @@ export function signup(request) {
     payload: request
   };
 };
+
+export function signout() {
+  return {
+    type: SIGNOUT
+  };
+}
 
 export function authUser() {
   return {
@@ -131,6 +152,17 @@ function *hundleSignup(action) {
   }
 }
 
+function *hundleSignout(action) {
+  console.log("hundle signout called");
+  try {
+    storage.removeAuth();
+    yield put({type: SIGNOUT_SUCCESS});
+  } catch(e) {
+    console.log(e);
+    yield put({type: SIGNOUT_FAIL, error: e.message});
+  }
+}
+
 function *hundleAuthUser(action) {
   console.log("hundle auth user called");
   try {
@@ -152,6 +184,7 @@ export function *authSagas() {
   yield all([
     takeLatest(LOGIN, hundleLogin),
     takeLatest(SIGNUP, hundleSignup),
+    takeLatest(SIGNOUT, hundleSignout),
     takeLatest(AUTH_USER, hundleAuthUser)
   ]);
 }
