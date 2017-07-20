@@ -3,7 +3,7 @@ import {Record} from 'immutable';
 const ViewPortRecord = Record({
   latitude: null,
   longitude: null,
-  zoom: 10,
+  zoom: 13,
   startDragLngLat: null,
   isDragging: null
 });
