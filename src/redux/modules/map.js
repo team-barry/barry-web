@@ -2,9 +2,6 @@ import {call, put, takeLatest, all} from 'redux-saga/effects';
 import {ViewPort, Message} from 'redux/models';
 import geoLocation from 'helpers/geoLocation';
 
-const GET_LOCATIONS = 'barry/map/GET_LOCATIONS';
-const GET_LOCATIONS_SUCCESS = 'barry/map/GET_LOCATIONS_SUCCESS';
-const GET_LOCATIONS_FAIL = 'barry/map/GET_LOCATIONS_FAIL';
 const GET_CURRENT_LOCATION = 'barry/map/GET_CURRENT_LOCATION';
 const GET_CURRENT_LOCATION_SUCCESS = 'barry/map/GET_CURRENT_LOCATION_SUCCESS';
 const GET_CURRENT_LOCATION_FAIL = 'barry/map/GET_CURRENT_LOCATION_FAIL';
@@ -19,12 +16,6 @@ const initialState = {
 
 export default function reducer(state = initialState, action = {}) {
   switch(action.type) {
-    case GET_LOCATIONS:
-      return state;
-    case GET_LOCATIONS_SUCCESS:
-      return state;
-    case GET_LOCATIONS_FAIL:
-      return state;
     case GET_CURRENT_LOCATION:
       return state;
     case GET_CURRENT_LOCATION_SUCCESS:

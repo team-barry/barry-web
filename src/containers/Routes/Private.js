@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import {withRouter, Route} from 'react-router';
 import * as authActions from 'redux/modules/auth';
 import * as mapActions from 'redux/modules/map';
+import * as placeActions from 'redux/modules/place';
 import Loading from 'pages/Loading/Loading';
 
 class Private extends Component {
@@ -15,6 +16,7 @@ class Private extends Component {
   
   componentWillMount() {
     this.isAuthenticated(this.props);
+    this.getCoordinates(this.props);
     this.getCurrentLocation(this.props);
   }
 
@@ -41,6 +43,12 @@ class Private extends Component {
     }
   }
   
+  getCoordinates(props) {
+    if(props.coordinates.size === 0) {
+      return props.getCoordinates();
+    }
+  }
+  
   render() {
     if(this.props.user.isLogging() || !this.props.viewport.hasLocation()) {
       return (
@@ -56,14 +64,16 @@ class Private extends Component {
 const mapStateToProps = (state) => {
   return {
     user: state.auth.user,
-    viewport: state.map.viewport
+    viewport: state.map.viewport,
+    coordinates: state.place.coordinates
   };
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     ...bindActionCreators(authActions, dispatch),
-    ...bindActionCreators(mapActions, dispatch)
+    ...bindActionCreators(mapActions, dispatch),
+    ...bindActionCreators(placeActions, dispatch)
   };
 }
 
