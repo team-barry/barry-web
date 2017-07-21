@@ -3,7 +3,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {withRouter} from 'react-router';
-import {Dropdown, Menu, Button, Icon} from 'semantic-ui-react';
+import {Dropdown, Menu, Icon} from 'semantic-ui-react';
 import * as authActions from 'redux/modules/auth';
 
 class UserHeader extends Component {
