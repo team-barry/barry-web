@@ -30,11 +30,12 @@ class UserHeader extends Component {
                 <Icon name="setting" />
                 User Edit
               </Dropdown.Item>
+              <Dropdown.Item onClick={this.hundleSignout}>
+                <Icon name="sign out" />
+                Sign out
+              </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
-          <Menu.Item>
-            <Button onClick={this.hundleSignout}>Sign out</Button>
-          </Menu.Item>
         </Menu.Menu>
       </Menu>
     )

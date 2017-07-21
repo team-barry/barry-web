@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import style from './User.css';
 import {UserHeader, UserMap} from 'containers';
-import {Sidebar, Menu, Icon} from 'semantic-ui-react'
-
+import {Sidebar, Menu} from 'semantic-ui-react'
+import UserSidebar from 'containers/Sidebar/Sidebar';
 
 export default class User extends Component {
   constructor() {
@@ -22,19 +22,8 @@ export default class User extends Component {
       <div className="page" style={style}>
         <UserHeader parentFunc={this.toggleHeaderVisible}/>
         <Sidebar.Pushable className="main">
-          <Sidebar as={Menu} animation='overlay' direction='left' visible={this.state.visible} icon='labeled' width="wide" vertical>
-            <Menu.Item name='home'>
-              <Icon name='home' />
-              Home
-            </Menu.Item>
-            <Menu.Item name='gamepad'>
-              <Icon name='gamepad' />
-              Games
-            </Menu.Item>
-            <Menu.Item name='camera'>
-              <Icon name='camera' />
-              Channels
-            </Menu.Item>
+          <Sidebar as={Menu} animation='overlay' visible={this.state.visible} width="wide" vertical>
+            <UserSidebar />
           </Sidebar>
           <Sidebar.Pusher>
             <UserMap />
