@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import {withRouter} from 'react-router';
 import {Dropdown, Menu, Icon} from 'semantic-ui-react';
 import * as authActions from 'redux/modules/auth';
+import * as mapActions from 'redux/modules/map';
 
 class UserHeader extends Component {
   static PropTypes = {
@@ -14,6 +15,7 @@ class UserHeader extends Component {
   
   hundleSignout = (event) => {
     event.preventDefault();
+    this.props.stopUpdatePosition();
     this.props.signout();
   }
   
@@ -51,7 +53,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    ...bindActionCreators(authActions, dispatch)
+    ...bindActionCreators(authActions, dispatch),
+    ...bindActionCreators(mapActions, dispatch)
   };
 };
 
