@@ -144,22 +144,6 @@ function *hundleSetViewPort(action) {
   }
 }
 
-function *hundleGetCurrentLocation(action) {
-  console.log("hundle get current location called");
-  try {
-    const coords = yield call(geoLocation);
-    console.log(coords);
-    const viewport = {
-      latitude: coords.latitude,
-      longitude: coords.longitude
-    }
-    yield put({type: GET_CURRENT_LOCATION_SUCCESS, viewport: viewport});
-  } catch(e) {
-    console.log(e);
-    yield put({type: GET_CURRENT_LOCATION_FAIL, error: e.message});
-  }
-}
-
 function *hundleGetCoordinates(action) {
   console.log("hundle get coordinates");
   try {
@@ -227,7 +211,6 @@ export function *triggerBgUpdatePosition() {
 export function *mapSagas() {
   yield all([
     takeLatest(SET_VIEWPORT, hundleSetViewPort),
-    takeLatest(GET_CURRENT_LOCATION, hundleGetCurrentLocation),
     takeLatest(GET_COORDINATES, hundleGetCoordinates)
   ]);
 }
