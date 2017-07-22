@@ -160,6 +160,21 @@ function *hundleGetCurrentLocation(action) {
   }
 }
 
+function *hundleGetCoordinates(action) {
+  console.log("hundle get coordinates");
+  try {
+    const req = {
+      endpoint: "coordinates",
+      auth: storage.getAuth()
+    };
+    const coordinates = yield call(API.getWithAuth, req);
+    yield put({type: GET_COORDINATES_SUCCESS, coordinates});
+  } catch(e) {
+    console.log(e);
+    yield put({type: GET_COORDINATES_FAIL, error: e.message});
+  }
+}
+
 export function *mapSagas() {
   yield all([
     takeLatest(SET_VIEWPORT, hundleSetViewPort),
