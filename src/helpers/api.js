@@ -86,7 +86,7 @@ export default class API {
   static postWithAuth(params) {
     const url = formatUrl(params.endpoint);
     const request = {
-      ...makeAuthHeaders('GET', params.auth),
+      ...makeAuthHeaders('POST', params.auth),
       body: JSON.stringify(params.body)
     }
     return fetchAPI(url, request);
