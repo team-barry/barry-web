@@ -199,10 +199,11 @@ function *bgUpdatePosition() {
         };
         const posted = yield call(API.postWithAuth, req);
         yield put({type: POST_COORDINATE_SUCCESS, coordinate: posted});
+        
+        beforeCoords = currentCoords;
       }
       nextTime = setNextTime(isMovePosition, nextTime);
       console.log(nextTime);
-      beforeCoords = currentCoords;
       
       yield delay(nextTime);
     }
