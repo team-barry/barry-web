@@ -34,7 +34,24 @@ class UserMap extends Component {
     this.props.setViewPort(this.props.viewport);
   };
   
+  generatePositions = () => {
+    const coordinates = this.props.coordinates;
+
+    const markers = coordinates.map((v) => {
+      return (
+        <Marker
+          key={v.coordinate_id}
+          coordinates={v.getLocationArray()}
+        >
+          <div className="pulseCircle" style={pulseCircleStyles} />
+        </Marker>
+      )
+    });
+    return markers;
+  }
+  
   render() {
+    const markers = this.generatePositions();
     return (
       <div className="map" style={styles}>
         <Map
@@ -49,6 +66,7 @@ class UserMap extends Component {
           >
             <div className="pulseCircle" style={pulseCircleStyles} />
           </Marker>
+          {markers}
         </Map>
         <FixedButton onClick={this.hundleToMoveCurrentLocation} />
       </div>
@@ -60,7 +78,8 @@ const mapStateToProps = (state) => {
   return {
     viewport: state.map.viewport,
     position: state.map.viewport.getLocationArray(),
-    zoom: state.map.viewport.getZoomArray()
+    zoom: state.map.viewport.getZoomArray(),
+    coordinates: state.map.coordinates
   };
 }
 
