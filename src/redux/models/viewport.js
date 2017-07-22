@@ -2,8 +2,7 @@ import {Record} from 'immutable';
 
 const ViewPortRecord = Record({
   latitude: null,
-  longitude: null,
-  zoom: 13
+  longitude: null
 });
 
 export default class ViewPort extends ViewPortRecord{
@@ -16,9 +15,5 @@ export default class ViewPort extends ViewPortRecord{
   
   getLocationArray() {
     return [this.longitude, this.latitude];
-  }
-  
-  getZoomArray() {
-    return [this.zoom];
   }
 };
