@@ -5,19 +5,19 @@ import PropTypes from 'prop-types';
 import {withRouter, Route} from 'react-router';
 import * as authActions from 'redux/modules/auth';
 import * as mapActions from 'redux/modules/map';
-import * as placeActions from 'redux/modules/place';
 import Loading from 'pages/Loading/Loading';
 
 class Private extends Component {
   static PropTypes = {
     user: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired
+    history: PropTypes.object.isRequired,
+    isUpdatingPosition: PropTypes.bool.isRequired
   };
   
   componentWillMount() {
     this.isAuthenticated(this.props);
     this.getCoordinates(this.props);
-    this.getCurrentLocation(this.props);
+    this.startUpdatePosition(this.props);
   }
 
   componentWillUpdate(nextProps) {
@@ -37,9 +37,9 @@ class Private extends Component {
     }
   }
   
-  getCurrentLocation(props) {
-    if(!props.viewport.hasLocation()) {
-      return props.getCurrentLocation();
+  startUpdatePosition(props) {
+    if(!props.isUpdatingPosition) {
+      return props.startUpdatePosition();
     }
   }
   
@@ -65,15 +65,15 @@ const mapStateToProps = (state) => {
   return {
     user: state.auth.user,
     viewport: state.map.viewport,
-    coordinates: state.place.coordinates
+    coordinates: state.map.coordinates,
+    isUpdatingPosition: state.map.isUpdating
   };
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     ...bindActionCreators(authActions, dispatch),
-    ...bindActionCreators(mapActions, dispatch),
-    ...bindActionCreators(placeActions, dispatch)
+    ...bindActionCreators(mapActions, dispatch)
   };
 }
 
