@@ -14,6 +14,7 @@ import FixedButton from 'components/Buttons/FixedButton/FixedButton';
 import * as mapActions from 'redux/modules/map';
 import styles from './UserMap.css';
 import pulseCircleStyles from './PulseCircle.css';
+import markerCircleStyles from './markerCircle.css';
 
 const token = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 const Map = ReactMapboxGl({
@@ -43,7 +44,7 @@ class UserMap extends Component {
           key={v.coordinate_id}
           coordinates={v.getLocationArray()}
         >
-          <div className="pulseCircle" style={pulseCircleStyles} />
+          <div className="marker circle" style={markerCircleStyles} />
         </Marker>
       )
     });
