@@ -10,12 +10,14 @@ import Loading from 'pages/Loading/Loading';
 class Private extends Component {
   static PropTypes = {
     user: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired
+    history: PropTypes.object.isRequired,
+    isUpdatingPosition: PropTypes.bool.isRequired
   };
   
   componentWillMount() {
     this.isAuthenticated(this.props);
-    this.getCurrentLocation(this.props);
+    this.getCoordinates(this.props);
+    this.startUpdatePosition(this.props);
   }
 
   componentWillUpdate(nextProps) {
@@ -35,9 +37,15 @@ class Private extends Component {
     }
   }
   
-  getCurrentLocation(props) {
-    if(!props.viewport.hasLocation()) {
-      return props.getCurrentLocation();
+  startUpdatePosition(props) {
+    if(!props.isUpdatingPosition) {
+      return props.startUpdatePosition();
+    }
+  }
+  
+  getCoordinates(props) {
+    if(props.coordinates.size === 0) {
+      return props.getCoordinates();
     }
   }
   
@@ -56,7 +64,9 @@ class Private extends Component {
 const mapStateToProps = (state) => {
   return {
     user: state.auth.user,
-    viewport: state.map.viewport
+    viewport: state.map.viewport,
+    coordinates: state.map.coordinates,
+    isUpdatingPosition: state.map.isUpdating
   };
 }
 

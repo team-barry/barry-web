@@ -1,0 +1,8 @@
+.marker.circle {
+  width: 7px;
+  height: 7px;
+  margin: 100px auto;
+  background-color: #0E6EB8;
+
+  border-radius: 100%;
+}

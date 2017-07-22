@@ -1,19 +1,16 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
-import 'mapbox-gl/dist/svg/mapboxgl-ctrl-compass.svg';
-import 'mapbox-gl/dist/svg/mapboxgl-ctrl-geolocate.svg';
-import 'mapbox-gl/dist/svg/mapboxgl-ctrl-zoom-in.svg';
-import 'mapbox-gl/dist/svg/mapboxgl-ctrl-zoom-out.svg';
 
 import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {withRouter} from 'react-router';
-import ReactMapboxGl, {Marker} from 'react-mapbox-gl';
+import ReactMapboxGl, {Marker, ZoomControl} from 'react-mapbox-gl';
 import FixedButton from 'components/Buttons/FixedButton/FixedButton';
 import * as mapActions from 'redux/modules/map';
 import styles from './UserMap.css';
 import pulseCircleStyles from './PulseCircle.css';
+import markerCircleStyles from './markerCircle.css';
 
 const token = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 const Map = ReactMapboxGl({
@@ -25,6 +22,13 @@ const mapStyle = {
 }
 
 class UserMap extends Component {
+  constructor() {
+    super();
+    this.state = {
+      zoom: 13
+    };
+  };
+  
   static PropTypes = {
     viewport: PropTypes.object.isRequired
   };
@@ -34,21 +38,45 @@ class UserMap extends Component {
     this.props.setViewPort(this.props.viewport);
   };
   
+  generatePositions = () => {
+    const coordinates = this.props.coordinates;
+
+    const markers = coordinates.map((v) => {
+      return (
+        <Marker
+          key={v.coordinate_id}
+          coordinates={v.getLocationArray()}
+        >
+          <div className="marker circle" style={markerCircleStyles} />
+        </Marker>
+      )
+    });
+    return markers;
+  };
+  
+  onZoomEnd = (map, event) => {
+    const zoom = map.getZoom();
+    console.log(zoom);
+    this.setState({zoom});
+  }
+  
   render() {
+    const markers = this.generatePositions();
     return (
       <div className="map" style={styles}>
         <Map
           style="mapbox://styles/mapbox/streets-v9"
           containerStyle={mapStyle}
           center={this.props.position}
-          zoom={this.props.zoom}
+          zoom={[this.state.zoom]}
           attributionControl={false}
+          onZoomEnd = {this.onZoomEnd}
         >
-          <Marker
-            coordinates={this.props.position}
-          >
+          <Marker coordinates={this.props.position}>
             <div className="pulseCircle" style={pulseCircleStyles} />
           </Marker>
+          {markers}
+          <ZoomControl />
         </Map>
         <FixedButton onClick={this.hundleToMoveCurrentLocation} />
       </div>
@@ -60,7 +88,7 @@ const mapStateToProps = (state) => {
   return {
     viewport: state.map.viewport,
     position: state.map.viewport.getLocationArray(),
-    zoom: state.map.viewport.getZoomArray()
+    coordinates: state.map.coordinates
   };
 }
 
