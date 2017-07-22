@@ -3,9 +3,7 @@ import {Record} from 'immutable';
 const ViewPortRecord = Record({
   latitude: null,
   longitude: null,
-  zoom: 13,
-  startDragLngLat: null,
-  isDragging: null
+  zoom: 13
 });
 
 export default class ViewPort extends ViewPortRecord{

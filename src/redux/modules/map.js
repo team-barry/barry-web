@@ -1,6 +1,6 @@
 import {call, put, take, cancelled, cancel, takeLatest, fork, all} from 'redux-saga/effects';
 import {delay} from 'redux-saga'
-import {Coordinate, ViewPort, Message, MapStatus} from 'redux/models';
+import {Coordinate, ViewPort, Message} from 'redux/models';
 import {List} from 'immutable';
 import geoLocation from 'helpers/geoLocation';
 import API from 'helpers/api';
@@ -24,9 +24,9 @@ const STOP_UPDATE_POSITION = 'barry/map/END_UPDATE_POSITION';
 
 const initialState = {
   coordinates: new List(),
-  mapStatus: new MapStatus(),
   viewport: new ViewPort(),
-  message: new Message()
+  message: new Message(),
+  isUpdating: false
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -82,12 +82,12 @@ export default function reducer(state = initialState, action = {}) {
     case START_UPDATE_POSITION:
       return {
         ...state,
-        mapStatus: state.mapStatus.set("updatingPostion", true)
+        isUpdating: true
       };
     case STOP_UPDATE_POSITION:
       return {
         ...state,
-        mapStatus: state.mapStatus.set("updatingPostion", false)
+        isUpdating: false
       };
     default:
       return state;
