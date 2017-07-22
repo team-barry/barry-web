@@ -193,6 +193,7 @@ function *bgUpdatePosition() {
     }
   } catch(e) {
     console.log(e);
+    yield put({type: STOP_UPDATE_POSITION});
   } finally {
     if (yield cancelled()) {
       console.log("bg process: update position is cancelled")
