@@ -175,6 +175,54 @@ function *hundleGetCoordinates(action) {
   }
 }
 
+function *bgUpdatePosition() {
+  try {
+    let nextTime = null;
+    let beforeCoords = null;
+    let currentCoords = null;
+    while (true) {
+      console.log("bg process: update position")
+      const coords = yield call(geoLocation);
+      currentCoords = {
+        latitude: coords.latitude,
+        longitude: coords.longitude
+      }
+      const isMovePosition = isMove(beforeCoords, currentCoords);
+      if(isMovePosition){
+        yield put({type: GET_CURRENT_LOCATION_SUCCESS, viewport: currentCoords});
+        const req = {
+          endpoint: "coordinates",
+          auth: storage.getAuth(),
+          body: {
+            coordinate: currentCoords
+          }
+        };
+        const posted = yield call(API.postWithAuth, req);
+        yield put({type: POST_COORDINATE_SUCCESS, coordinate: posted});
+      }
+      nextTime = setNextTime(isMovePosition, nextTime);
+      console.log(nextTime);
+      beforeCoords = currentCoords;
+      
+      yield delay(nextTime);
+    }
+  } catch(e) {
+    console.log(e);
+  } finally {
+    if (yield cancelled()) {
+      console.log("bg process: update position is cancelled")
+    }
+  }
+}
+
+export function *triggerBgUpdatePosition() {
+  while (yield take(START_UPDATE_POSITION)) {
+    const bgSyncTask = yield fork(bgUpdatePosition)
+    yield take(STOP_UPDATE_POSITION)
+    yield cancel(bgSyncTask)
+  }
+}
+
 export function *mapSagas() {
   yield all([
     takeLatest(SET_VIEWPORT, hundleSetViewPort),
