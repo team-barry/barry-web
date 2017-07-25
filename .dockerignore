@@ -1,0 +1,19 @@
+## build files
+build
+
+## nginx files
+nginx
+
+## Environment normalisation:
+node_modules
+.git*
+
+## log
+log/*
+tmp/*
+
+## OSX
+.DS_Store
+
+## docker
+.dockerignore

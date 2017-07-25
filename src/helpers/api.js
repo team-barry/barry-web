@@ -1,14 +1,10 @@
 import fetch from 'isomorphic-fetch';
 
-const server = {
-  host: process.env.REACT_APP_SERVER_HOST,
-  port: process.env.REACT_APP_SERVER_PORT,
-  ver: process.env.REACT_APP_SERVER_VER
-};
+const server = process.env.REACT_APP_SERVER
 
 function formatUrl(path) {
   const adjustedPath = path[0] !== '/' ? '/' + path : path;
-  return 'http://' + server.host + ':' + server.port + '/' + server.ver + adjustedPath;
+  return server + adjustedPath;
 }
 
 function makeHeaders(method) {

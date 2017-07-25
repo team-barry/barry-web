@@ -7,6 +7,7 @@ import style from 'semantic-ui-css/semantic.min.css';
 const store = myStore();
 class App extends Component {
   render() {
+    console.log(process.env);
     return (
       <Provider store={store}>
         <div className="App" style={style}>
