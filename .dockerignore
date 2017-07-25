@@ -1,5 +1,8 @@
-## Node
+## build files
 build
+
+## nginx files
+nginx
 
 ## Environment normalisation:
 node_modules
