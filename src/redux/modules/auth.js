@@ -1,14 +1,12 @@
 import {call, put, takeLatest, all} from 'redux-saga/effects';
 import {User, Message} from 'redux/models';
-import API from 'helpers/api';
+import {UserUtil} from 'redux/models/user';
 import * as storage from 'helpers/storage';
+import {firebaseAuth, FirebaseList} from 'helpers/firebase';
 
 const LOGIN = 'barry/auth/LOGIN';
 const LOGIN_SUCCESS = 'barry/auth/LOGIN_SUCCESS';
 const LOGIN_FAIL = 'barry/auth/LOGIN_FAIL';
-const SIGNUP = 'barry/auth/SIGNUP';
-const SIGNUP_SUCCESS = 'barry/auth/SIGNUP_SUCCESS';
-const SIGNUP_FAIL = 'barry/auth/SIGNUP_FAIL';
 const SIGNOUT = 'barry/auth/SIGNOUT';
 const SIGNOUT_SUCCESS = 'barry/auth/SIGNOUT_SUCCESS';
 const SIGNOUT_FAIL = 'barry/auth/SIGNOUT_FAIL';
@@ -21,6 +19,8 @@ const initialState = {
   message: new Message()
 };
 
+const authList = new FirebaseList("users");
+
 export default function reducer(state = initialState, action = {}) {
   switch(action.type) {
     case LOGIN:
@@ -29,26 +29,11 @@ export default function reducer(state = initialState, action = {}) {
       return {
         user: new User({
           ...action.user,
-          is_valid: true
+          isLogging: true
         }),
         message: state.message
       };
     case LOGIN_FAIL:
-      return {
-        user: new User(),
-        message: state.message.set("error", action.error)
-      };
-    case SIGNUP:
-      return state;
-    case SIGNUP_SUCCESS:
-      return {
-        user: new User({
-          ...action.user,
-          is_valid: true
-        }),
-        message: state.message
-      };
-    case SIGNUP_FAIL:
       return {
         user: new User(),
         message: state.message.set("error", action.error)
@@ -69,7 +54,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         user: new User({
           ...state.user,
-          is_logging: true
+          isLogging: true
         }),
         message: state.message
       };
@@ -77,8 +62,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         user: new User({
           ...action.user,
-          is_valid: true,
-          is_logging: false
+          isLogging: false
         }),
         message: state.message
       }
@@ -99,13 +83,6 @@ export function login(request) {
   };
 };
 
-export function signup(request) {
-  return {
-    type: SIGNUP,
-    payload: request
-  };
-};
-
 export function signout() {
   return {
     type: SIGNOUT
@@ -121,12 +98,15 @@ export function authUser() {
 function *hundleLogin(action) {
   console.log("hundle login called");
   try {
-    const req = {
-      endpoint: "login",
-      body: action.payload
+    const provider = action.payload.provider;
+
+    let auth = firebaseAuth.currentUser;
+    if(!auth) {
+      auth = yield call([firebaseAuth, firebaseAuth.signInWithPopup], provider);
     }
-    const user = yield call(API.post, req);
-    storage.setAuth(user);
+    const user = UserUtil.fromAuth(auth);
+
+    yield call([authList, authList.update], user.uid, user);
     yield put({type: LOGIN_SUCCESS, user: user});
    } catch (e) {
      console.log(e);
@@ -134,28 +114,10 @@ function *hundleLogin(action) {
    }
 };
 
-function *hundleSignup(action) {
-  console.log("hundle signup called");
-  try {
-    const req = {
-      endpoint: "users",
-      body: {
-        user: action.payload
-      }
-    };
-    const user = yield call(API.post, req);
-    storage.setAuth(user);
-    yield put({type: SIGNUP_SUCCESS, user: user});
-  } catch(e) {
-    console.log(e);
-    yield put({type: SIGNUP_FAIL, error: e.message});
-  }
-}
-
 function *hundleSignout(action) {
   console.log("hundle signout called");
   try {
-    storage.removeAuth();
+    yield call([firebaseAuth, firebaseAuth.signOut]);
     yield put({type: SIGNOUT_SUCCESS});
   } catch(e) {
     console.log(e);
@@ -166,16 +128,15 @@ function *hundleSignout(action) {
 function *hundleAuthUser(action) {
   console.log("hundle auth user called");
   try {
-    const req = {
-      endpoint: "login",
-      auth: storage.getAuth()
-    };
-    const user = yield call(API.getWithAuth, req);
-    
+    const auth = firebaseAuth.currentUser;
+    if(!auth) {
+      yield put({type: AUTH_USER_FAIL, error: "failed_auth_user"});
+      return
+    }
+    const user = UserUtil.fromAuth(auth);
     yield put({type: AUTH_USER_SUCCESS, user: user});
   } catch(e) {
     console.log(e);
-    storage.removeAuth();
     yield put({type: AUTH_USER_FAIL, error: e.message});
   }
 }
@@ -183,7 +144,6 @@ function *hundleAuthUser(action) {
 export function *authSagas() {
   yield all([
     takeLatest(LOGIN, hundleLogin),
-    takeLatest(SIGNUP, hundleSignup),
     takeLatest(SIGNOUT, hundleSignout),
     takeLatest(AUTH_USER, hundleAuthUser)
   ]);

@@ -1,10 +1,51 @@
 import React, { Component } from 'react';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 import {Header} from 'components';
 import {Button} from 'semantic-ui-react';
+import PropTypes from 'prop-types';
+import {withRouter} from 'react-router';
+import * as authActions from 'redux/modules/auth';
 import style from './Top.css';
-import {Link} from 'react-router-dom';
+import firebase from 'firebase';
 
-export default class Top extends Component {
+class Top extends Component {
+  static PropTypes = {
+    user: PropTypes.object,
+    message: PropTypes.object,
+    login: PropTypes.func
+  };
+
+  componentWillMount() {
+    this.onChangeUser(this.props.user);
+  }
+
+  componentWillUpdate(nextProps) {
+    if(this.props.user !== nextProps.user) {
+      console.log("user changed");
+
+      this.onChangeUser(nextProps.user);
+      return true;
+    }
+    return false;
+  }
+
+  onClickStart = (event) => {
+    // [TODO]
+    // Add auth privider facebook
+    const google = new firebase.auth.GoogleAuthProvider();
+    const payload = {
+      provider: google
+    };
+    this.props.login(payload);
+  }
+
+  onChangeUser = (user) => {
+    if(user.isLogin()) {
+      this.props.history.push('/user');
+    }
+  }
+
   render() {
     return (
       <div className="page" style={style}>
@@ -14,7 +55,7 @@ export default class Top extends Component {
           <h1 className="title">EVERYWHERE</h1>
         </section>
         <section className="footer">
-          <Button as={Link} to="/signup" color="orange" size="massive">
+          <Button onClick={this.onClickStart} color="orange" size="massive">
             START TRACK
           </Button>
         </section>
@@ -22,3 +63,18 @@ export default class Top extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.auth.user,
+    message: state.auth.message
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    ...bindActionCreators(authActions, dispatch)
+  };
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Top));

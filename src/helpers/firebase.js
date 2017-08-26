@@ -18,7 +18,48 @@ const firebaseConfig = {
   messagingSenderId: REACT_APP_FIREBASE_MESSAGING_SENDER_ID
 }
 
-console.log(firebaseConfig);
-
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
-export const firebaseDb = firebaseApp.database();
+export const firebaseDb = firebase.database();
+export const firebaseAuth = firebase.auth();
+
+export class FirebaseList {
+  constructor(path = null) {
+    this._path = path;
+  }
+
+  get path() {
+    return this._path;
+  }
+
+  set path(value) {
+    this._path = value;
+  }
+
+  push(value) {
+    return new Promise((resolve, reject) => {
+      firebaseDb.ref(this._path)
+        .push(value, error => error ? reject(error) : resolve());
+    });
+  }
+
+  remove(key) {
+    return new Promise((resolve, reject) => {
+      firebaseDb.ref(`${this._path}/${key}`)
+        .remove(error => error ? reject(error) : resolve());
+    });
+  }
+
+  set(key, value) {
+    return new Promise((resolve, reject) => {
+      firebaseDb.ref(`${this._path}/${key}`)
+        .set(value, error => error ? reject(error) : resolve());
+    });
+  }
+
+  update(key, value) {
+    return new Promise((resolve, reject) => {
+      firebaseDb.ref(`${this._path}/${key}`)
+        .update(value, error => error ? reject(error) : resolve());
+    });
+  }
+}

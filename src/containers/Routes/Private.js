@@ -13,7 +13,7 @@ class Private extends Component {
     history: PropTypes.object.isRequired,
     isUpdatingPosition: PropTypes.bool.isRequired
   };
-  
+
   componentWillMount() {
     this.isAuthenticated(this.props);
     this.getCoordinates(this.props);
@@ -36,19 +36,19 @@ class Private extends Component {
       props.history.replace('/');
     }
   }
-  
+
   startUpdatePosition(props) {
     if(!props.isUpdatingPosition) {
       return props.startUpdatePosition();
     }
   }
-  
+
   getCoordinates(props) {
     if(props.coordinates.size === 0) {
       return props.getCoordinates();
     }
   }
-  
+
   render() {
     if(this.props.user.isLogging() || !this.props.viewport.hasLocation()) {
       return (

@@ -2,40 +2,43 @@ import {Record} from 'immutable';
 import * as storage from 'helpers/storage';
 
 const UserRecord = Record({
-  user_id: null,
+  uid: null,
   name: null,
   email: null,
-  access_token: null,
-  token_type: null,
-  is_valid: false,
-  is_logging: false
+  isLogging: false,
 });
 
 export default class User extends UserRecord{
   isLogin() {
-    if(this.user_id && this.access_token) {
+    if(this.uid) {
       return true;
     };
     return false;
-  }
-  
-  hasAuthInLocalStorage() {
-    const auth = storage.getAuth();
-    if(auth.access_token && auth.token_type) {
+  };
+
+  isLogging() {
+    return this.isLogging;
+  };
+
+  hasUserInLocalStorage() {
+    const user = storage.getAuth();
+    if(user.uid) {
       return true;
     }
     return false;
-  }
-  
+  };
+
   needAuth() {
-    return !this.isValid() && !this.isLogging() && this.hasAuthInLocalStorage();
-  }
-  
-  isLogging() {
-    return this.is_logging;
-  }
-  
-  isValid() {
-    return this.is_valid;
-  }
+    return !this.isLogin() && !this.isLogging() && this.hasUserInLocalStorage();
+  };
+};
+
+export class UserUtil {
+  static fromAuth(user) {
+    return {
+      uid: user.uid,
+      name: user.displayName,
+      email: user.email,
+    };
+  };
 };
