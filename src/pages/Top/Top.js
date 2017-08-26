@@ -4,7 +4,6 @@ import {connect} from 'react-redux';
 import {Header} from 'components';
 import {Button} from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import {withRouter} from 'react-router';
 import * as authActions from 'redux/modules/auth';
 import style from './Top.css';
 import firebase from 'firebase';
@@ -22,8 +21,6 @@ class Top extends Component {
 
   componentWillUpdate(nextProps) {
     if(this.props.user !== nextProps.user) {
-      console.log("user changed");
-
       this.onChangeUser(nextProps.user);
       return true;
     }
@@ -77,4 +74,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Top));
+export default connect(mapStateToProps, mapDispatchToProps)(Top);

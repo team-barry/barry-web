@@ -1,8 +1,8 @@
 import {call, put, takeLatest, all} from 'redux-saga/effects';
 import {User, Message} from 'redux/models';
 import {UserUtil} from 'redux/models/user';
-import * as storage from 'helpers/storage';
 import {firebaseAuth, FirebaseList} from 'helpers/firebase';
+import history from 'helpers/history';
 
 const LOGIN = 'barry/auth/LOGIN';
 const LOGIN_SUCCESS = 'barry/auth/LOGIN_SUCCESS';
@@ -24,14 +24,19 @@ const authList = new FirebaseList("users");
 export default function reducer(state = initialState, action = {}) {
   switch(action.type) {
     case LOGIN:
-      return state;
+      return {
+        ...state,
+        user: new User({
+          logging: true
+        })
+      };
     case LOGIN_SUCCESS:
       return {
+        ...state,
         user: new User({
           ...action.user,
-          isLogging: true
-        }),
-        message: state.message
+          logging: false
+        })
       };
     case LOGIN_FAIL:
       return {
@@ -54,7 +59,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         user: new User({
           ...state.user,
-          isLogging: true
+          logging: true
         }),
         message: state.message
       };
@@ -62,7 +67,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         user: new User({
           ...action.user,
-          isLogging: false
+          logging: false
         }),
         message: state.message
       }
@@ -95,18 +100,21 @@ export function authUser() {
   };
 }
 
-function *hundleLogin(action) {
-  console.log("hundle login called");
+function *handleLogin(action) {
+  console.log("handle login called");
   try {
     const provider = action.payload.provider;
 
-    let auth = firebaseAuth.currentUser;
-    if(!auth) {
-      auth = yield call([firebaseAuth, firebaseAuth.signInWithPopup], provider);
+    let authedUser = firebaseAuth.currentUser;
+    if(!authedUser) {
+      const auth = yield call([firebaseAuth, firebaseAuth.signInWithPopup], provider);
+      authedUser = auth.user;
     }
-    const user = UserUtil.fromAuth(auth);
+    const user = UserUtil.fromAuth(authedUser);
 
     yield call([authList, authList.update], user.uid, user);
+
+    history.push("/user");
     yield put({type: LOGIN_SUCCESS, user: user});
    } catch (e) {
      console.log(e);
@@ -114,10 +122,12 @@ function *hundleLogin(action) {
    }
 };
 
-function *hundleSignout(action) {
-  console.log("hundle signout called");
+function *handleSignout(action) {
+  console.log("handle signout called");
   try {
     yield call([firebaseAuth, firebaseAuth.signOut]);
+
+    history.push("/")
     yield put({type: SIGNOUT_SUCCESS});
   } catch(e) {
     console.log(e);
@@ -125,12 +135,13 @@ function *hundleSignout(action) {
   }
 }
 
-function *hundleAuthUser(action) {
-  console.log("hundle auth user called");
+function *handleAuthUser(action) {
+  console.log("handle auth user called");
   try {
     const auth = firebaseAuth.currentUser;
     if(!auth) {
       yield put({type: AUTH_USER_FAIL, error: "failed_auth_user"});
+      history.push("/");
       return
     }
     const user = UserUtil.fromAuth(auth);
@@ -143,8 +154,8 @@ function *hundleAuthUser(action) {
 
 export function *authSagas() {
   yield all([
-    takeLatest(LOGIN, hundleLogin),
-    takeLatest(SIGNOUT, hundleSignout),
-    takeLatest(AUTH_USER, hundleAuthUser)
+    takeLatest(LOGIN, handleLogin),
+    takeLatest(SIGNOUT, handleSignout),
+    takeLatest(AUTH_USER, handleAuthUser)
   ]);
 }

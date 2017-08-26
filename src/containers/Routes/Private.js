@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {withRouter, Route} from 'react-router';
+import {Route} from 'react-router';
 import * as authActions from 'redux/modules/auth';
 import * as mapActions from 'redux/modules/map';
 import Loading from 'pages/Loading/Loading';
@@ -15,26 +15,21 @@ class Private extends Component {
   };
 
   componentWillMount() {
-    this.isAuthenticated(this.props);
+    this.isAuthenticated();
+    this.initStateWithUser(this.props);
     this.getCoordinates(this.props);
     this.startUpdatePosition(this.props);
   }
 
-  componentWillUpdate(nextProps) {
-    this.isAuthenticated(nextProps);
+  isAuthenticated() {
+    return this.props.authUser();
   }
 
-  isAuthenticated(props) {
+  initStateWithUser(props) {
     const user = props.user;
-    if(user.needAuth()) {
-      return this.props.authUser();
-    }
-    if(user.isLogging()) {
-      return;
-    }
-    if(!user.isLogin()) {
-      props.history.replace('/');
-    }
+
+    // set firebase lists;
+    return props.setMapList(user);
   }
 
   startUpdatePosition(props) {
@@ -77,4 +72,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Private));
+export default connect(mapStateToProps, mapDispatchToProps)(Private);

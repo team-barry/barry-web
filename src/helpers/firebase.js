@@ -62,4 +62,10 @@ export class FirebaseList {
         .update(value, error => error ? reject(error) : resolve());
     });
   }
+
+  get() {
+    return firebaseDb.ref(this.path).once("value").then(snapshot => {
+      return Object.values(snapshot.val());
+    });
+  }
 }

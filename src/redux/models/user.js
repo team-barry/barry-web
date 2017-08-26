@@ -1,11 +1,10 @@
 import {Record} from 'immutable';
-import * as storage from 'helpers/storage';
 
 const UserRecord = Record({
   uid: null,
   name: null,
   email: null,
-  isLogging: false,
+  logging: false,
 });
 
 export default class User extends UserRecord{
@@ -17,19 +16,7 @@ export default class User extends UserRecord{
   };
 
   isLogging() {
-    return this.isLogging;
-  };
-
-  hasUserInLocalStorage() {
-    const user = storage.getAuth();
-    if(user.uid) {
-      return true;
-    }
-    return false;
-  };
-
-  needAuth() {
-    return !this.isLogin() && !this.isLogging() && this.hasUserInLocalStorage();
+    return this.logging;
   };
 };
 

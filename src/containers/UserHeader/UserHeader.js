@@ -12,16 +12,16 @@ class UserHeader extends Component {
     user: PropTypes.object,
     signout: PropTypes.func,
   }
-  
+
   hundleSignout = (event) => {
     event.preventDefault();
     this.props.stopUpdatePosition();
     this.props.signout();
   }
-  
+
   render() {
     return (
-      <Menu size="large" compact={true}>
+      <Menu size="huge" compact={false}>
         <Menu.Item onClick={this.props.parentFunc}>
           <Icon name="content" size="large" />
         </Menu.Item>
