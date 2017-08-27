@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {withRouter, Route} from 'react-router';
+import {Route} from 'react-router';
 import * as authActions from 'redux/modules/auth';
 import * as mapActions from 'redux/modules/map';
 import Loading from 'pages/Loading/Loading';
@@ -13,42 +13,27 @@ class Private extends Component {
     history: PropTypes.object.isRequired,
     isUpdatingPosition: PropTypes.bool.isRequired
   };
-  
+
   componentWillMount() {
-    this.isAuthenticated(this.props);
-    this.getCoordinates(this.props);
-    this.startUpdatePosition(this.props);
+    console.log("private component will mount");
+
+    this.isAuthenticated();
+    if(this.props.user.isLogin()) {
+      this.startUpdatePosition(this.props);
+    }
   }
 
-  componentWillUpdate(nextProps) {
-    this.isAuthenticated(nextProps);
+  isAuthenticated() {
+    return this.props.authUser();
   }
 
-  isAuthenticated(props) {
-    const user = props.user;
-    if(user.needAuth()) {
-      return this.props.authUser();
-    }
-    if(user.isLogging()) {
-      return;
-    }
-    if(!user.isLogin()) {
-      props.history.replace('/');
-    }
-  }
-  
   startUpdatePosition(props) {
     if(!props.isUpdatingPosition) {
-      return props.startUpdatePosition();
+      props.setMapList(props.user);
+      props.startUpdatePosition();
     }
   }
-  
-  getCoordinates(props) {
-    if(props.coordinates.size === 0) {
-      return props.getCoordinates();
-    }
-  }
-  
+
   render() {
     if(this.props.user.isLogging() || !this.props.viewport.hasLocation()) {
       return (
@@ -77,4 +62,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Private));
+export default connect(mapStateToProps, mapDispatchToProps)(Private);

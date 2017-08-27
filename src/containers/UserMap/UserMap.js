@@ -17,9 +17,10 @@ const Map = ReactMapboxGl({
   accessToken: token
 });
 const mapStyle = {
-  width: "100vw",
-  height: "100vh"
-}
+  flex: 1,
+  width: "100%",
+  height: "100%"
+};
 
 class UserMap extends Component {
   constructor() {
@@ -28,16 +29,16 @@ class UserMap extends Component {
       zoom: 13
     };
   };
-  
+
   static PropTypes = {
     viewport: PropTypes.object.isRequired
   };
-  
+
   hundleToMoveCurrentLocation = (event) => {
     console.log("move current location!");
     this.props.setViewPort(this.props.viewport);
   };
-  
+
   generatePositions = () => {
     const coordinates = this.props.coordinates;
 
@@ -53,19 +54,19 @@ class UserMap extends Component {
     });
     return markers;
   };
-  
+
   onZoomEnd = (map, event) => {
     const zoom = map.getZoom();
-    console.log(zoom);
     this.setState({zoom});
   }
-  
+
   render() {
     const markers = this.generatePositions();
+    const mapDesign = "mapbox://styles/mapbox/streets-v9";
     return (
       <div className="map" style={styles}>
         <Map
-          style="mapbox://styles/mapbox/streets-v9"
+          style={mapDesign}
           containerStyle={mapStyle}
           center={this.props.position}
           zoom={[this.state.zoom]}

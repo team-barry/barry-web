@@ -6,27 +6,28 @@ import {withRouter} from 'react-router';
 import {Dropdown, Menu, Icon} from 'semantic-ui-react';
 import * as authActions from 'redux/modules/auth';
 import * as mapActions from 'redux/modules/map';
+import styles from './UserHeader.css'
 
 class UserHeader extends Component {
   static PropTypes = {
     user: PropTypes.object,
     signout: PropTypes.func,
   }
-  
+
   hundleSignout = (event) => {
     event.preventDefault();
-    this.props.stopUpdatePosition();
     this.props.signout();
+    this.props.stopUpdatePosition();
   }
-  
+
   render() {
     return (
-      <Menu size="large" compact={true}>
+      <Menu size="huge" compact={false} className="no-margin-bottom" style={{"margin": 0}}>
         <Menu.Item onClick={this.props.parentFunc}>
           <Icon name="content" size="large" />
         </Menu.Item>
         <Menu.Menu position="right">
-          <Dropdown text={this.props.user.email} pointing className='link item'>
+          <Dropdown text={this.props.user.name} pointing className='link item'>
             <Dropdown.Menu>
               <Dropdown.Item>
                 <Icon name="setting" />
