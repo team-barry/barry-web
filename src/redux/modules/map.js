@@ -163,8 +163,8 @@ function *bgUpdatePosition() {
       }).toJS()
       const isMovePosition = isMove(beforeCoords, currentCoords);
       if(isMovePosition){
-        yield put({type: PUSH_COORDINATE, coordinate: currentCoords});
         yield put({type: GET_CURRENT_LOCATION_SUCCESS, viewport: currentCoords});
+        yield put({type: PUSH_COORDINATE, coordinate: currentCoords});
         yield fork(pushLocation, `locations/${DateFactory.today()}`, currentCoords);
 
         beforeCoords = currentCoords;
