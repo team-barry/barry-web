@@ -4,7 +4,7 @@ import {ConnectedRouter} from 'react-router-redux';
 import myStore from './redux/store';
 import RoutePages from './routes';
 import history from 'helpers/history';
-import style from 'semantic-ui-css/semantic.min.css';
+import style from 'semantic-ui-css/semantic.css';
 
 const store = myStore();
 class App extends Component {

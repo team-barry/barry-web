@@ -17,8 +17,9 @@ const Map = ReactMapboxGl({
   accessToken: token
 });
 const mapStyle = {
-  width: "90vw",
-  height: "90vh"
+  flex: 1,
+  width: "100%",
+  height: "100%"
 };
 
 class UserMap extends Component {
@@ -61,10 +62,11 @@ class UserMap extends Component {
 
   render() {
     const markers = this.generatePositions();
+    const mapDesign = "mapbox://styles/mapbox/streets-v9";
     return (
       <div className="map" style={styles}>
         <Map
-          style="mapbox://styles/mapbox/streets-v9"
+          style={mapDesign}
           containerStyle={mapStyle}
           center={this.props.position}
           zoom={[this.state.zoom]}

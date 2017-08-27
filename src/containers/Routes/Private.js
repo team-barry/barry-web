@@ -16,12 +16,9 @@ class Private extends Component {
 
   componentWillMount() {
     console.log("private component will mount");
-    console.log(this.props.user, this.props.user.isLogin());
 
     this.isAuthenticated();
     if(this.props.user.isLogin()) {
-      this.initStateWithUser(this.props);
-      this.getCoordinates(this.props);
       this.startUpdatePosition(this.props);
     }
   }
@@ -30,27 +27,14 @@ class Private extends Component {
     return this.props.authUser();
   }
 
-  initStateWithUser(props) {
-    const user = props.user;
-
-    // set firebase lists;
-    return props.setMapList(user);
-  }
-
   startUpdatePosition(props) {
     if(!props.isUpdatingPosition) {
-      return props.startUpdatePosition();
-    }
-  }
-
-  getCoordinates(props) {
-    if(props.coordinates.size === 0) {
-      return props.getCoordinates();
+      props.setMapList(props.user);
+      props.startUpdatePosition();
     }
   }
 
   render() {
-    console.log("viewport", this.props.viewport, this.props.viewport.hasLocation());
     if(this.props.user.isLogging() || !this.props.viewport.hasLocation()) {
       return (
         <Loading />
