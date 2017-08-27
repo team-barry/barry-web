@@ -1,14 +1,18 @@
 ## Barry
+**** Everywhere Tracking ****
 Barry is the GPS tracking system and The applications will helps accidents in trekking.
 
-URL: Implementing...
+![The dog names barry he rescues many victims](./docs/resources/barry.jpg "barry dog")
 
-## Barry Client
-This repository is client applications of barry. It uses following techniques.
-- ES6
-- React, Redux
+URL: https://barry.dog
 
 ### Start
-```
+```bash
 yarn start
 ```
+
+### Tech
+Barry uses those following technologies.
+- Single page application used by React and Redux
+- Serverless with firebase
+- [WIP] React Native?
