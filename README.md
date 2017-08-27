@@ -1,5 +1,6 @@
 ## Barry
-**** Everywhere Tracking ****
+*** Everywhere Tracking ***
+
 Barry is the GPS tracking system and The applications will helps accidents in trekking.
 
 ![The dog names barry he rescues many victims](./docs/resources/barry.jpg "barry dog")
