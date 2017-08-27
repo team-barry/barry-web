@@ -15,8 +15,8 @@ class UserHeader extends Component {
 
   hundleSignout = (event) => {
     event.preventDefault();
-    this.props.stopUpdatePosition();
     this.props.signout();
+    this.props.stopUpdatePosition();
   }
 
   render() {

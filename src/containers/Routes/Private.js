@@ -15,10 +15,15 @@ class Private extends Component {
   };
 
   componentWillMount() {
+    console.log("private component will mount");
+    console.log(this.props.user, this.props.user.isLogin());
+
     this.isAuthenticated();
-    this.initStateWithUser(this.props);
-    this.getCoordinates(this.props);
-    this.startUpdatePosition(this.props);
+    if(this.props.user.isLogin()) {
+      this.initStateWithUser(this.props);
+      this.getCoordinates(this.props);
+      this.startUpdatePosition(this.props);
+    }
   }
 
   isAuthenticated() {
@@ -45,6 +50,7 @@ class Private extends Component {
   }
 
   render() {
+    console.log("viewport", this.props.viewport, this.props.viewport.hasLocation());
     if(this.props.user.isLogging() || !this.props.viewport.hasLocation()) {
       return (
         <Loading />

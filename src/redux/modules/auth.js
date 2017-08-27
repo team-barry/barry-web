@@ -56,19 +56,13 @@ export default function reducer(state = initialState, action = {}) {
         message: state.message.set("error", action.error)
       }
     case AUTH_USER:
-      return {
-        user: new User({
-          ...state.user,
-          logging: true
-        }),
-        message: state.message
-      };
+      return state;
     case AUTH_USER_SUCCESS:
+      if(state.user && state.user.isLogin()) {
+        return state;
+      }
       return {
-        user: new User({
-          ...action.user,
-          logging: false
-        }),
+        user: new User(action.user),
         message: state.message
       }
     case AUTH_USER_FAIL:
@@ -113,9 +107,9 @@ function *handleLogin(action) {
     const user = UserUtil.fromAuth(authedUser);
 
     yield call([authList, authList.update], user.uid, user);
+    yield put({type: LOGIN_SUCCESS, user: user});
 
     history.push("/user");
-    yield put({type: LOGIN_SUCCESS, user: user});
    } catch (e) {
      console.log(e);
      yield put({type: LOGIN_FAIL, error: e.message});
@@ -126,9 +120,9 @@ function *handleSignout(action) {
   console.log("handle signout called");
   try {
     yield call([firebaseAuth, firebaseAuth.signOut]);
+    yield put({type: SIGNOUT_SUCCESS});
 
     history.push("/")
-    yield put({type: SIGNOUT_SUCCESS});
   } catch(e) {
     console.log(e);
     yield put({type: SIGNOUT_FAIL, error: e.message});

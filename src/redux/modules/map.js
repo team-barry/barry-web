@@ -5,17 +5,17 @@ import {List} from 'immutable';
 import geoLocation from 'helpers/geoLocation';
 import {isMove, setNextTime} from 'helpers/distance';
 import {FirebaseList} from 'helpers/firebase';
+import {DateFactory} from 'helpers/date';
 
 const SET_MAPLIST = 'barry/map/SET_MAPLIST';
+const SET_VIEWPORT = 'barry/map/SET_VIEWPORT';
 const GET_CURRENT_LOCATION = 'barry/map/GET_CURRENT_LOCATION';
 const GET_CURRENT_LOCATION_SUCCESS = 'barry/map/GET_CURRENT_LOCATION_SUCCESS';
 const GET_CURRENT_LOCATION_FAIL = 'barry/map/GET_CURRENT_LOCATION_FAIL';
-const SET_VIEWPORT = 'barry/map/SET_VIEWPORT';
-const SET_VIEWPORT_SUCCESS = 'barry/map/SET_VIEWPORT_SUCCESS';
-const SET_VIEWPORT_FAIL = 'barry/map/SET_VIEWPORT_FAIL';
 const GET_COORDINATES = 'barry/map/GET_COORDINATES';
 const GET_COORDINATES_SUCCESS = 'barry/map/GET_COORDINATES_SUCCESS';
 const GET_COORDINATES_FAIL = 'barry/map/GET_COORDINATES_FAIL';
+const PUSH_COORDINATE = 'barry/map/PUSH_COORDINATE';
 const POST_COORDINATE = 'barry/map/POST_COORDINATE';
 const POST_COORDINATE_SUCCESS = 'barry/map/POST_COORDINATE_SUCCESS';
 const POST_COORDINATE_FAIL = 'barry/map/POST_COORDINATE_FAIL';
@@ -46,14 +46,10 @@ export default function reducer(state = initialState, action = {}) {
     case GET_CURRENT_LOCATION_FAIL:
       return state;
     case SET_VIEWPORT:
-      return state;
-    case SET_VIEWPORT_SUCCESS:
       return {
         ...state,
         viewport: new ViewPort(action.viewport)
       };
-    case SET_VIEWPORT_FAIL:
-      return state;
     case GET_COORDINATES:
       return state;
     case GET_COORDINATES_SUCCESS:
@@ -71,9 +67,18 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         message: state.message.set("error", action.error)
       };
+    case PUSH_COORDINATE:
+      console.log("push coordinate success", action.coordinate);
+      return {
+        ...state,
+        coordinates: state.coordinates.push(
+          new Coordinate(action.coordinate)
+        ),
+      };
     case POST_COORDINATE:
       return state;
     case POST_COORDINATE_SUCCESS:
+      console.log("post coordinate success", action.coordinate);
       return {
         ...state,
         coordinates: state.coordinates.push(
@@ -106,15 +111,16 @@ export default function reducer(state = initialState, action = {}) {
 };
 
 export function setMapList(user) {
-  mapList.path = ["users", user.uid, "locations"].join("/");
+  mapList.path = ["users", user.uid].join("/");
   return {
     type: SET_MAPLIST
   };
 }
 
-export function setViewPort() {
+export function setViewPort(viewport) {
   return {
-    type: SET_VIEWPORT
+    type: SET_VIEWPORT,
+    viewport: viewport
   };
 }
 
@@ -130,10 +136,10 @@ export function getCoordinates() {
   };
 }
 
-export function postCoordinate(payload) {
+export function pushCoordinate(coordinate) {
   return {
     type: POST_COORDINATE,
-    payload: payload
+    coordinate: coordinate
   };
 }
 
@@ -159,25 +165,16 @@ function* write(context, method, ...params) {
 }
 
 const pushLocation = write.bind(null, mapList, mapList.push);
+const updateLocationDate = write.bind(null, mapList, mapList.update);
 const removeLocation = write.bind(null, mapList, mapList.remove);
-
-function *handleSetViewPort(action) {
-  console.log("handle set view port called");
-  try {
-    const viewport = action.payload;
-    yield put({type: SET_VIEWPORT_SUCCESS, viewport: viewport});
-  } catch(e) {
-    console.log(e);
-    yield put({type: SET_VIEWPORT_FAIL, error: e.message});
-  }
-}
 
 function *handleGetCoordinates(action) {
   console.log("handle get coordinates");
   try {
-    console.log(mapList.path);
-    const coordinates = yield call([mapList, mapList.get]);
-    console.log(coordinates);
+    const locations = yield call([mapList, mapList.get], `locations/${DateFactory.today()}`);
+    console.log(locations);
+
+    const coordinates = Object.values(locations);
     yield put({type: GET_COORDINATES_SUCCESS, coordinates});
   } catch(e) {
     console.log(e);
@@ -190,22 +187,24 @@ function *bgUpdatePosition() {
     let nextTime = null;
     let beforeCoords = null;
     let currentCoords = null;
+
+    yield fork(updateLocationDate, "dates", {[DateFactory.today()]: true});
     while (true) {
       console.log("bg process: update position")
       const coords = yield call(geoLocation);
-      currentCoords = {
+      currentCoords = new Coordinate({
         latitude: coords.latitude,
         longitude: coords.longitude
-      }
+      }).toJS()
       const isMovePosition = isMove(beforeCoords, currentCoords);
       if(isMovePosition){
+        yield put({type: PUSH_COORDINATE, coordinate: currentCoords});
         yield put({type: GET_CURRENT_LOCATION_SUCCESS, viewport: currentCoords});
-        yield fork(pushLocation, currentCoords);
+        yield fork(pushLocation, `locations/${DateFactory.today()}`);
 
         beforeCoords = currentCoords;
       }
       nextTime = setNextTime(isMovePosition, nextTime);
-      console.log(nextTime);
 
       yield delay(nextTime);
     }
@@ -229,7 +228,6 @@ export function *triggerBgUpdatePosition() {
 
 export function *mapSagas() {
   yield all([
-    takeLatest(SET_VIEWPORT, handleSetViewPort),
     takeLatest(GET_COORDINATES, handleGetCoordinates)
   ]);
 }

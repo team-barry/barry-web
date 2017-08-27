@@ -35,9 +35,9 @@ export class FirebaseList {
     this._path = value;
   }
 
-  push(value) {
+  push(key, value) {
     return new Promise((resolve, reject) => {
-      firebaseDb.ref(this._path)
+      firebaseDb.ref(`${this._path}/${key}`)
         .push(value, error => error ? reject(error) : resolve());
     });
   }
@@ -63,9 +63,11 @@ export class FirebaseList {
     });
   }
 
-  get() {
-    return firebaseDb.ref(this.path).once("value").then(snapshot => {
-      return Object.values(snapshot.val());
+  get(key = null) {
+    const refPath = key ? `${this._path}/${key}` : `${this._path}`
+    console.log("get", refPath);
+    return firebaseDb.ref(refPath).once("value").then(snapshot => {
+      return snapshot.val();
     });
   }
 }

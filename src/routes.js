@@ -1,15 +1,16 @@
 import React from 'react';
 import {TopPage, UserPage} from './pages';
 import {PrivateRoute} from './containers';
-import {BrowserRouter, Route, Switch} from 'react-router-dom'
+import {Router, Route, Switch} from 'react-router-dom'
+import history from 'helpers/history';
 
 const routes = () => (
-  <BrowserRouter>
+  <Router history={history}>
     <Switch>
       <PrivateRoute exact path="/user" component={UserPage} />
-      <Route path="/" component={TopPage} />
+      <Route component={TopPage} />
     </Switch>
-  </BrowserRouter>
+  </Router>
 );
 
 export default routes;
