@@ -25,7 +25,7 @@ export class DateFactory {
     return this.beforeDays(1);
   }
 
-  static getFormatDate(moment) {
+  static formatDate(moment) {
     return moment.format(YMD_FORMAT);
   }
 

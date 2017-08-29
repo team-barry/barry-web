@@ -1,7 +1,7 @@
 import {call, put, take, cancelled, cancel, fork, all, takeLatest} from 'redux-saga/effects';
 import {delay} from 'redux-saga'
 import {Coordinate, Message} from 'redux/models';
-import {List} from 'immutable';
+import {List, Map} from 'immutable';
 import geoLocation from 'helpers/geoLocation';
 import {isMove, setNextTime} from 'helpers/distance';
 import {FirebaseList} from 'helpers/firebase';
@@ -19,6 +19,9 @@ const PUSH_COORDINATE = 'barry/map/PUSH_COORDINATE';
 const START_UPDATE_POSITION = 'barry/map/START_UPDATE_POSITION';
 const STOP_UPDATE_POSITION = 'barry/map/END_UPDATE_POSITION';
 const FIREBASE_FAILED = 'barry/map/FIREBASE_FAILED';
+const GET_USING_DATES = 'barry/map/GET_USING_DATES';
+const GET_USING_DATES_SUCCESS = 'barry/map/GET_USING_DATES_SUCCESS';
+const GET_USING_DATES_FAIL = 'barry/map/GET_USING_DATES_FAIL';
 
 const initialState = {
   selectedDay: DateFactory.today(),
@@ -26,7 +29,8 @@ const initialState = {
   coordinates: new List(),
   message: new Message(),
   ready: false,
-  isUpdating: false
+  isUpdating: false,
+  usingDates: new Map()
 };
 
 const mapList = new FirebaseList();
@@ -99,6 +103,18 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         message: state.message.set("error", action.error)
       };
+    case GET_USING_DATES:
+      return state;
+    case GET_USING_DATES_SUCCESS:
+      return {
+        ...state,
+        usingDates: new Map(action.usingDates)
+      };
+    case GET_USING_DATES_FAIL:
+      return {
+        ...state,
+        message: state.message.set("error", action.error)
+      };
     default:
       return state;
   }
@@ -143,6 +159,15 @@ export function stopUpdatePosition() {
   };
 }
 
+export function getUsingDates(month) {
+  return {
+    type: GET_USING_DATES,
+    payload: {
+      month: month
+    }
+  };
+}
+
 function* write(context, method, ...params) {
   try {
     console.log("write?", context, params);
@@ -156,7 +181,7 @@ function* write(context, method, ...params) {
 const pushLocation = write.bind(null, mapList, mapList.push);
 const updateLocationDate = write.bind(null, mapList, mapList.update);
 
-function *getCoordinatesSelectedDay(payload) {
+function *handleGetCoordinates(payload) {
   const {selectedDay} = payload;
 
   if(selectedDay === DateFactory.today()) {
@@ -175,6 +200,22 @@ function *getCoordinatesSelectedDay(payload) {
   catch(e) {
     console.log(e);
     yield put({type: GET_COORDINATES_FAIL, error: e.message});
+  }
+}
+
+function *handleGetUsingDates(payload) {
+  const {month} = payload;
+  // [TODO]
+  // 指定した月からデータのある日を取ってくるように修正する
+  try {
+    let dates = yield call([mapList, mapList.get], `dates`);
+    if(!dates) {
+      dates = {};
+    }
+    yield put({type: GET_USING_DATES_SUCCESS, usingDates: dates})
+  } catch(e) {
+    console.log(e);
+    yield put({type: GET_USING_DATES_FAIL, error: e.message});
   }
 }
 
@@ -206,7 +247,7 @@ function *bgUpdatePosition() {
         yield put({type: GET_CURRENT_LOCATION_SUCCESS, viewport: currentCoords});
         yield put({type: PUSH_COORDINATE, coordinate: currentCoords});
         yield fork(pushLocation, `locations/${DateFactory.today()}`, currentCoords);
-
+        yield put({type: READY});
         beforeCoords = currentCoords;
       }
       nextTime = setNextTime(isMovePosition, nextTime);
@@ -233,6 +274,7 @@ export function *triggerBgUpdatePosition() {
 
 export function *mapSagas() {
   yield all([
-    takeLatest(GET_COORDINATES, getCoordinatesSelectedDay)
+    takeLatest(GET_COORDINATES, handleGetCoordinates),
+    takeLatest(GET_USING_DATES, handleGetUsingDates)
   ]);
 }

@@ -19,18 +19,30 @@ class MyDatePicker extends Component {
     };
   };
 
+  componentWillMount() {
+    this.props.getUsingDates();
+  }
+
   static PropTypes = {
     user: PropTypes.object,
     coordinates: PropTypes.object
   };
 
   handleChange = (date) => {
-    const formatDate = DateFactory.getFormatDate(date);
+    const formatDate = DateFactory.formatDate(date);
     this.setState({
       startDate: date
     });
     this.props.getSelectedCoordinates(formatDate);
   };
+
+  sieveDate = (date) => {
+    const usingDates = this.props.usingDates;
+    if(usingDates.get(DateFactory.formatDate(date))) {
+      return 'having';
+    }
+    return 'not-having';
+  }
 
   render() {
     return (
@@ -45,6 +57,7 @@ class MyDatePicker extends Component {
             inline
             selected={this.state.startDate}
             onChange={this.handleChange}
+            dayClassName={this.sieveDate}
           />
         </Card.Content>
       </Card>
@@ -54,7 +67,8 @@ class MyDatePicker extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.auth.user
+    user: state.auth.user,
+    usingDates: state.map.usingDates
   };
 };
 
