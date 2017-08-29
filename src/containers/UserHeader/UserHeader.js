@@ -6,12 +6,13 @@ import {withRouter} from 'react-router';
 import {Dropdown, Menu, Icon} from 'semantic-ui-react';
 import * as authActions from 'redux/modules/auth';
 import * as mapActions from 'redux/modules/map';
-import styles from './UserHeader.css'
+import './UserHeader.css'
 
 class UserHeader extends Component {
   static PropTypes = {
     user: PropTypes.object,
     signout: PropTypes.func,
+    toggleVisibility: PropTypes.func.isRequried
   }
 
   hundleSignout = (event) => {
@@ -23,7 +24,7 @@ class UserHeader extends Component {
   render() {
     return (
       <Menu size="huge" compact={false} className="no-margin-bottom" style={{"margin": 0}}>
-        <Menu.Item onClick={this.props.parentFunc}>
+        <Menu.Item onClick={this.props.toggleVisibility}>
           <Icon name="content" size="large" />
         </Menu.Item>
         <Menu.Menu position="right">

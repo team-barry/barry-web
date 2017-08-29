@@ -35,7 +35,7 @@ class Private extends Component {
   }
 
   render() {
-    if(this.props.user.isLogging() || !this.props.viewport.hasLocation()) {
+    if(this.props.user.isLogging() || !this.props.ready) {
       return (
         <Loading />
       )
@@ -49,9 +49,8 @@ class Private extends Component {
 const mapStateToProps = (state) => {
   return {
     user: state.auth.user,
-    viewport: state.map.viewport,
-    coordinates: state.map.coordinates,
-    isUpdatingPosition: state.map.isUpdating
+    isUpdatingPosition: state.map.isUpdating,
+    ready: state.map.ready
   };
 }
 

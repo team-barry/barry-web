@@ -25,6 +25,10 @@ export class DateFactory {
     return this.beforeDays(1);
   }
 
+  static formatDate(moment) {
+    return moment.format(YMD_FORMAT);
+  }
+
   static dateList(terms = 1) {
     if(terms < 1) {
       return [this.today()];

@@ -1,16 +1,15 @@
-import 'mapbox-gl/dist/mapbox-gl.css';
-
 import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {withRouter} from 'react-router';
 import ReactMapboxGl, {Marker, ZoomControl} from 'react-mapbox-gl';
 import FixedButton from 'components/Buttons/FixedButton/FixedButton';
 import * as mapActions from 'redux/modules/map';
 import styles from './UserMap.css';
 import pulseCircleStyles from './PulseCircle.css';
 import markerCircleStyles from './markerCircle.css';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import {DateFactory} from 'helpers/date';
 
 const token = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 const Map = ReactMapboxGl({
@@ -26,22 +25,49 @@ class UserMap extends Component {
   constructor() {
     super();
     this.state = {
-      zoom: 13
+      zoom: 13,
+      position: [0, 0]
     };
   };
 
   static PropTypes = {
-    viewport: PropTypes.object.isRequired
+    position: PropTypes.array.isRequired,
+    coordinates: PropTypes.object.isRequired
   };
+
+  setPosition = (props) => {
+    if(!props.position) return false;
+    if(this.state.position === props.position) return false;
+
+    this.setState({
+      ...this.state,
+      position: props.position
+    });
+    return true;
+  };
+
+  componentWillMount() {
+    this.setPosition(this.props);
+  };
+
+  componentWillUpdate(nextProps) {
+    const positionFlag = this.setPosition(nextProps);
+    if(positionFlag) {
+      return true;
+    }
+    return false;
+  }
 
   hundleToMoveCurrentLocation = (event) => {
     console.log("move current location!");
-    this.props.setViewPort(this.props.viewport);
+    this.setState({
+      ...this.state,
+      position: this.props.position
+    });
   };
 
   generatePositions = () => {
     const coordinates = this.props.coordinates;
-
     const markers = coordinates.map((v) => {
       return (
         <Marker
@@ -57,7 +83,10 @@ class UserMap extends Component {
 
   onZoomEnd = (map, event) => {
     const zoom = map.getZoom();
-    this.setState({zoom});
+    this.setState({
+      ...this.state,
+      zoom
+    });
   }
 
   render() {
@@ -68,12 +97,12 @@ class UserMap extends Component {
         <Map
           style={mapDesign}
           containerStyle={mapStyle}
-          center={this.props.position}
+          center={this.state.position}
           zoom={[this.state.zoom]}
           attributionControl={false}
           onZoomEnd = {this.onZoomEnd}
         >
-          <Marker coordinates={this.props.position}>
+          <Marker coordinates={this.state.position}>
             <div className="pulseCircle" style={pulseCircleStyles} />
           </Marker>
           {markers}
@@ -86,10 +115,18 @@ class UserMap extends Component {
 }
 
 const mapStateToProps = (state) => {
+  const mapData = state.map;
+  const isToday = mapData.selectedDay === DateFactory.today();
+  const coordinates = isToday ? mapData.coordinates : mapData.selectedCoordinates;
+  let position = null;
+  if(coordinates && coordinates.size > 0) {
+    position = coordinates.last().getLocationArray();
+  };
+
   return {
-    viewport: state.map.viewport,
-    position: state.map.viewport.getLocationArray(),
-    coordinates: state.map.coordinates
+    isToday,
+    coordinates,
+    position
   };
 }
 
@@ -99,4 +136,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserMap));
+export default connect(mapStateToProps, mapDispatchToProps)(UserMap);

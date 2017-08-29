@@ -1,11 +1,13 @@
 import React from 'react';
-// import {Container} from 'semantic-ui-react';
-import styles from './Sidebar.css';
+import TrackingCardList from 'containers/TrackingCardList/TrackingCardList';
+import DatePicker from 'containers/DatePicker/DatePicker';
+import './Sidebar.css'
 
 const Sidebar = () => {
   return (
-    <div style={styles.sidebar}>
-      <div>implementing...</div>
+    <div className='sideabr'>
+      <TrackingCardList />
+      <DatePicker />
     </div>
   )
 }
