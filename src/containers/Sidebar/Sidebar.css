@@ -1,3 +1,7 @@
 .sidebar {
   padding: 20px;
 }
+
+.ui.left.sidebar, .ui.right.sidebar {
+  width: auto !important;
+}
