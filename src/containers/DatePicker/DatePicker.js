@@ -2,44 +2,52 @@ import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {Card, Feed} from 'semantic-ui-react'
 import * as authActions from 'redux/modules/auth';
 import * as mapActions from 'redux/modules/map';
-import TrackingCard from 'components/TrackingCard/TrackingCard';
-import './TrackingCardList.css'
+import {Card, Feed} from 'semantic-ui-react'
+import moment from 'moment';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import './DatePicker.css'
 
-const LIMIT = 5
+class MyDatePicker extends Component {
+  constructor() {
+    super();
+    this.state = {
+      startDate: moment()
+    };
+  };
 
-class TrackingCardList extends Component {
   static PropTypes = {
     user: PropTypes.object,
     coordinates: PropTypes.object
-  }
+  };
 
-  coordinatesEventList = (coordinates, limit) => {
-    const currents = coordinates.toJS().slice(-limit).reverse();
-    return currents.map(coordinate => {
-      return <TrackingCard key={coordinate.coordinate_id} coordinate={coordinate} />
+  handleChange = (date) => {
+    this.setState({
+      startDate: date
     });
-  }
+  };
 
   render() {
     return (
       <Card>
         <Card.Content>
           <Card.Header>
-            Recent Trackings
+            History
           </Card.Header>
         </Card.Content>
         <Card.Content>
-          <Feed>
-            {this.coordinatesEventList(this.props.coordinates, LIMIT)}
-          </Feed>
+          <DatePicker
+            inline
+            selected={this.state.startDate}
+            onChange={this.handleChange}
+          />
         </Card.Content>
       </Card>
-    )
-  }
-}
+    );
+  };
+};
 
 const mapStateToProps = (state) => {
   return {
@@ -55,4 +63,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(TrackingCardList);
+export default connect(mapStateToProps, mapDispatchToProps)(MyDatePicker);

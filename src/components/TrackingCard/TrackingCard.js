@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Feed} from 'semantic-ui-react'
-import styles from './TrackingCard.css'
 import {formatLatLng, formatDate} from 'helpers/format';
+import './TrackingCard.css'
 
 class TrackingCard extends Component {
   static PropTypes = {

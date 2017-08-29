@@ -1,5 +1,3 @@
-import 'mapbox-gl/dist/mapbox-gl.css';
-
 import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
@@ -11,6 +9,7 @@ import * as mapActions from 'redux/modules/map';
 import styles from './UserMap.css';
 import pulseCircleStyles from './PulseCircle.css';
 import markerCircleStyles from './markerCircle.css';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 const token = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 const Map = ReactMapboxGl({

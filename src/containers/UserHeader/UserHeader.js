@@ -6,7 +6,7 @@ import {withRouter} from 'react-router';
 import {Dropdown, Menu, Icon} from 'semantic-ui-react';
 import * as authActions from 'redux/modules/auth';
 import * as mapActions from 'redux/modules/map';
-import styles from './UserHeader.css'
+import './UserHeader.css'
 
 class UserHeader extends Component {
   static PropTypes = {

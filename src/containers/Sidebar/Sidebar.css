@@ -5,3 +5,7 @@
 .ui.left.sidebar, .ui.right.sidebar {
   width: auto !important;
 }
+
+.sidebar .ui.card {
+  margin-bottom: 25px;
+}
