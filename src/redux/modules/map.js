@@ -1,27 +1,31 @@
-import {call, put, take, cancelled, cancel, fork, all} from 'redux-saga/effects';
+import {call, put, take, cancelled, cancel, fork, all, takeLatest} from 'redux-saga/effects';
 import {delay} from 'redux-saga'
-import {Coordinate, ViewPort, Message} from 'redux/models';
+import {Coordinate, Message} from 'redux/models';
 import {List} from 'immutable';
 import geoLocation from 'helpers/geoLocation';
 import {isMove, setNextTime} from 'helpers/distance';
 import {FirebaseList} from 'helpers/firebase';
 import {DateFactory} from 'helpers/date';
 
+const READY = 'barry/map/READY';
 const SET_MAPLIST = 'barry/map/SET_MAPLIST';
-const SET_VIEWPORT = 'barry/map/SET_VIEWPORT';
 const GET_CURRENT_LOCATION = 'barry/map/GET_CURRENT_LOCATION';
 const GET_CURRENT_LOCATION_SUCCESS = 'barry/map/GET_CURRENT_LOCATION_SUCCESS';
 const GET_CURRENT_LOCATION_FAIL = 'barry/map/GET_CURRENT_LOCATION_FAIL';
+const GET_COORDINATES = 'barry/map/GET_COORDINATES';
 const GET_COORDINATES_SUCCESS = 'barry/map/GET_COORDINATES_SUCCESS';
+const GET_COORDINATES_FAIL = 'barry/map/GET_COORDINATES_FAIL';
 const PUSH_COORDINATE = 'barry/map/PUSH_COORDINATE';
 const START_UPDATE_POSITION = 'barry/map/START_UPDATE_POSITION';
 const STOP_UPDATE_POSITION = 'barry/map/END_UPDATE_POSITION';
 const FIREBASE_FAILED = 'barry/map/FIREBASE_FAILED';
 
 const initialState = {
+  selectedDay: DateFactory.today(),
+  selectedCoordinates: new List(),
   coordinates: new List(),
-  viewport: new ViewPort(),
   message: new Message(),
+  ready: false,
   isUpdating: false
 };
 
@@ -29,36 +33,49 @@ const mapList = new FirebaseList();
 
 export default function reducer(state = initialState, action = {}) {
   switch(action.type) {
+    case READY:
+      return {
+        ...state,
+        ready: true
+      };
     case SET_MAPLIST:
       return state;
     case GET_CURRENT_LOCATION:
       return state;
     case GET_CURRENT_LOCATION_SUCCESS:
-      return {
-        ...state,
-        viewport: new ViewPort(action.viewport)
-      };
-    case GET_CURRENT_LOCATION_FAIL:
       return state;
-    case SET_VIEWPORT:
+    case GET_CURRENT_LOCATION_FAIL:
       return {
         ...state,
-        viewport: new ViewPort(action.viewport)
+        message: state.message.set("error", action.error)
+      };
+    case GET_COORDINATES:
+      return {
+        ...state,
+        selectedDay: action.selectedDay
       };
     case GET_COORDINATES_SUCCESS:
       // サーバーから位置を取得することが現在地取得よりも早いので
       // 速度向上のためにviewportを設定してしまう
-      if(action.coordinates) {
-        const coordinates = List(action.coordinates.map((v) => {
-          return new Coordinate(v);
-        }));
+      const coordinatesArray = action.coordinates || [];
+      const coordinates = List(coordinatesArray.map((v) => {
+        return new Coordinate(v);
+      }));
+      if(action.selected) {
         return {
           ...state,
-          coordinates: coordinates,
-          viewport: coordinates.last()
+          selectedCoordinates: coordinates,
         };
       }
-      return state;
+      return {
+        ...state,
+        coordinates: coordinates,
+      };
+    case GET_COORDINATES_FAIL:
+      return {
+        ...state,
+        message: state.message.set("error", action.error)
+      };
     case PUSH_COORDINATE:
       console.log("push coordinate", action.coordinate);
       return {
@@ -94,13 +111,6 @@ export function setMapList(user) {
   };
 }
 
-export function setViewPort(viewport) {
-  return {
-    type: SET_VIEWPORT,
-    viewport: viewport
-  };
-}
-
 export function getCurrentLocation() {
   return {
     type: GET_CURRENT_LOCATION
@@ -112,6 +122,13 @@ export function pushCoordinate(coordinate) {
     type: PUSH_COORDINATE,
     coordinate: coordinate
   };
+}
+
+export function getSelectedCoordinates(day) {
+  return {
+    type: GET_COORDINATES,
+    selectedDay: day
+  }
 }
 
 export function startUpdatePosition() {
@@ -139,6 +156,28 @@ function* write(context, method, ...params) {
 const pushLocation = write.bind(null, mapList, mapList.push);
 const updateLocationDate = write.bind(null, mapList, mapList.update);
 
+function *getCoordinatesSelectedDay(payload) {
+  const {selectedDay} = payload;
+
+  if(selectedDay === DateFactory.today()) {
+    return
+  }
+  try {
+    const locations = yield call([mapList, mapList.get], `locations/${selectedDay}`);
+    if(locations) {
+      const coordinates = Object.values(locations);
+      yield put({type: GET_COORDINATES_SUCCESS, coordinates, selected: true});
+      return
+    }
+    // ない場合も同様にPutする
+    yield put({type: GET_COORDINATES_SUCCESS, coordinates: null, selected: true});
+  }
+  catch(e) {
+    console.log(e);
+    yield put({type: GET_COORDINATES_FAIL, error: e.message});
+  }
+}
+
 function *bgUpdatePosition() {
   try {
     console.log("bg process: update position")
@@ -150,8 +189,9 @@ function *bgUpdatePosition() {
     const locations = yield call([mapList, mapList.get], `locations/${DateFactory.today()}`);
     if(locations) {
       const coordinates = Object.values(locations);
-      yield put({type: GET_COORDINATES_SUCCESS, coordinates});
-      beforeCoords = List(coordinates).last()
+      yield put({type: GET_COORDINATES_SUCCESS, coordinates, selected: false});
+      yield put({type: READY});
+      beforeCoords = List(coordinates).last();
     }
 
     yield fork(updateLocationDate, "dates", {[DateFactory.today()]: true});
@@ -193,5 +233,6 @@ export function *triggerBgUpdatePosition() {
 
 export function *mapSagas() {
   yield all([
+    takeLatest(GET_COORDINATES, getCoordinatesSelectedDay)
   ]);
 }

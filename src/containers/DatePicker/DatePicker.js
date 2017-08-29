@@ -4,9 +4,10 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import * as authActions from 'redux/modules/auth';
 import * as mapActions from 'redux/modules/map';
-import {Card, Feed} from 'semantic-ui-react'
+import {Card} from 'semantic-ui-react'
 import moment from 'moment';
 import DatePicker from 'react-datepicker';
+import {DateFactory} from 'helpers/date';
 import 'react-datepicker/dist/react-datepicker.css';
 import './DatePicker.css'
 
@@ -24,9 +25,11 @@ class MyDatePicker extends Component {
   };
 
   handleChange = (date) => {
+    const formatDate = DateFactory.getFormatDate(date);
     this.setState({
       startDate: date
     });
+    this.props.getSelectedCoordinates(formatDate);
   };
 
   render() {
@@ -51,8 +54,7 @@ class MyDatePicker extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.auth.user,
-    coordinates: state.map.coordinates
+    user: state.auth.user
   };
 };
 
