@@ -23,9 +23,21 @@ class MyDatePicker extends Component {
     this.props.getUsingDates();
   }
 
+  componentWillUpdate(nextProps) {
+    const prevSelectedDay = DateFactory.formatDate(this.state.startDate);
+    const nextSelectedDay = nextProps.selectedDay;
+    if(prevSelectedDay !== nextSelectedDay) {
+        this.setState({...this.state, startDate: moment(nextSelectedDay)});
+        return true;
+    }
+    return false;
+  }
+
   static PropTypes = {
     user: PropTypes.object,
-    coordinates: PropTypes.object
+    coordinates: PropTypes.object,
+    usingDates: PropTypes.object,
+    selectedDay: PropTypes.string
   };
 
   handleChange = (date) => {
@@ -68,6 +80,7 @@ class MyDatePicker extends Component {
 const mapStateToProps = (state) => {
   return {
     user: state.auth.user,
+    selectedDay: state.map.selectedDay,
     usingDates: state.map.usingDates
   };
 };
