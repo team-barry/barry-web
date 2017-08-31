@@ -22,48 +22,28 @@ const mapStyle = {
 };
 
 class UserMap extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      zoom: 13,
-      position: [0, 0]
+      zoom: 13
     };
   };
 
   static PropTypes = {
-    position: PropTypes.array.isRequired,
-    coordinates: PropTypes.object.isRequired
-  };
-
-  setPosition = (props) => {
-    if(!props.position) return false;
-    if(this.state.position === props.position) return false;
-
-    this.setState({
-      ...this.state,
-      position: props.position
-    });
-    return true;
-  };
-
-  componentWillMount() {
-    this.setPosition(this.props);
+    viewport: PropTypes.array.isRequired,
+    current: PropTypes.array.isRequired,
+    coordinates: PropTypes.object.isRequired,
+    getSelectedCoordinates: PropTypes.func.isRequired
   };
 
   componentWillUpdate(nextProps) {
-    const positionFlag = this.setPosition(nextProps);
-    if(positionFlag) {
-      return true;
-    }
-    return false;
+    if(this.state.viewport === nextProps.viewport) return false;
   }
 
+  // 移動ボタンを押すと現在地に移動する
   hundleToMoveCurrentLocation = (event) => {
     console.log("move current location!");
-    this.setState({
-      ...this.state,
-      position: this.props.position
-    });
+    this.props.getSelectedCoordinates(DateFactory.today());
   };
 
   generatePositions = () => {
@@ -97,12 +77,12 @@ class UserMap extends Component {
         <Map
           style={mapDesign}
           containerStyle={mapStyle}
-          center={this.state.position}
+          center={this.props.viewport}
           zoom={[this.state.zoom]}
           attributionControl={false}
           onZoomEnd = {this.onZoomEnd}
         >
-          <Marker coordinates={this.state.position}>
+          <Marker coordinates={this.props.current}>
             <div className="pulseCircle" style={pulseCircleStyles} />
           </Marker>
           {markers}
@@ -115,18 +95,17 @@ class UserMap extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const mapData = state.map;
-  const isToday = mapData.selectedDay === DateFactory.today();
-  const coordinates = isToday ? mapData.coordinates : mapData.selectedCoordinates;
-  let position = null;
-  if(coordinates && coordinates.size > 0) {
-    position = coordinates.last().getLocationArray();
-  };
-
+  const {coordinates: currentCoordinates, selectedCoordinates, selectedDay} = state.map;
+  const isToday = DateFactory.today() === selectedDay;
+  const current = currentCoordinates.last().getLocationArray();
+  const coordinates = isToday ? currentCoordinates : selectedCoordinates;
+  let viewport = current;
+  if(!isToday && coordinates.size > 0) viewport = coordinates.last().getLocationArray();
   return {
-    isToday,
+    selectedDay,
     coordinates,
-    position
+    current,
+    viewport
   };
 }
 
