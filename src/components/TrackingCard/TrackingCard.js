@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Feed} from 'semantic-ui-react'
 import {formatLatLng, formatDate} from 'helpers/format';
+import moment from 'moment';
 import './TrackingCard.css'
 
 class TrackingCard extends Component {
@@ -14,9 +15,9 @@ class TrackingCard extends Component {
     return (
       <Feed.Event>
         <Feed.Content>
-          <Feed.Date content={formatDate(created_at)} />
+          <Feed.Date content={moment(created_at).format("A hh:mm:ss")} />
           <Feed.Summary>
-            <p>({formatLatLng(longitude)}, {formatLatLng(latitude)})</p>
+            <p>{formatLatLng(longitude)}, {formatLatLng(latitude)}</p>
           </Feed.Summary>
         </Feed.Content>
       </Feed.Event>
