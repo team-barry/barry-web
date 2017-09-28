@@ -7,12 +7,27 @@ import * as mapActions from 'redux/modules/map';
 
 import {Button, Form} from 'semantic-ui-react'
 
+import Comment from 'model/comment';
+
 class CommentPostView extends Component {
+  constructor() {
+    console.log("called")
+    super()
+    this.state = {
+      comment: ""
+    }
+  }
+  handleChange(e, { value }) {
+    this.setState({
+      ...this.state,
+      comment: value,
+    })
+  }
   render() {
     return (
       <Form reply>
-        <Form.TextArea />
-        <Button content='Add Comment' labelPosition='left' icon='edit' onClick={() => console.log("OK")} primary />
+        <Form.TextArea onChange={(e, hash) => this.handleChange(e, hash)}/>
+        <Button content='Add Comment' labelPosition='left' icon='edit' onClick={ () => {console.log(this.state); Comment.push(this.props.user, this.state.comment, this.state.comment)} } primary />
       </Form>
     )
   }
@@ -21,8 +36,6 @@ class CommentPostView extends Component {
 const mapStateToProps = (state) => {
   return {
     user: state.auth.user,
-    selectedDay: state.map.selectedDay,
-    usingDates: state.map.usingDates
   };
 };
 
