@@ -27,7 +27,7 @@ class CommentPostView extends Component {
     return (
       <Form reply>
         <Form.TextArea onChange={(e, hash) => this.handleChange(e, hash)}/>
-        <Button content='Add Comment' labelPosition='left' icon='edit' onClick={ () => {console.log(this.state); Comment.push(this.props.user, this.state.comment, this.state.comment)} } primary />
+        <Button content='Add Comment' labelPosition='left' icon='edit' onClick={ () => {console.log(this.state); Comment.push(this.props.user, this.state.comment)} } primary />
       </Form>
     )
   }
