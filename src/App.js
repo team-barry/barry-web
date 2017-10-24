@@ -1,15 +1,16 @@
-import React, { Component } from 'react';
-import {Provider} from 'react-redux';
-import {ConnectedRouter} from 'react-router-redux';
-import myStore from './redux/store';
-import RoutePages from './routes';
-import history from 'helpers/history';
-import style from 'semantic-ui-css/semantic.css';
+import React, { Component } from "react";
+import { Provider } from "react-redux";
+import { ConnectedRouter } from "react-router-redux";
+import myStore from "./redux/store";
+import RoutePages from "./routes";
+import history from "helpers/history";
+import style from "semantic-ui-css/semantic.css";
+import i18n from "./locales";
 
 const store = myStore();
 class App extends Component {
   render() {
-    if(process.env.NODE_ENV === "development"){
+    if (process.env.NODE_ENV === "development") {
       console.log(process.env);
     }
     return (
