@@ -12,6 +12,9 @@ URL: https://barry.dog
 yarn start
 ```
 
+### PR
+Before PR, you must lint with `./lint.sh` execution.
+
 ### Tech
 Barry uses those following technologies.
 - Single page application used by React and Redux
