@@ -1,14 +1,16 @@
-import Moment from 'moment';
-import {extendMoment} from 'moment-range';
+import Moment from "moment";
+import { extendMoment } from "moment-range";
 
 const moment = extendMoment(Moment);
 
-const YMD_FORMAT = "YYYY-MM-DD"
-const DAYS = 'days';
+const YMD_FORMAT = "YYYY-MM-DD";
+const DAYS = "days";
 
 export class DateFactory {
   static beforeDays(days = 0) {
-   return moment().subtract(days, DAYS).format(YMD_FORMAT);
+    return moment()
+      .subtract(days, DAYS)
+      .format(YMD_FORMAT);
   }
 
   static now() {
@@ -30,7 +32,7 @@ export class DateFactory {
   }
 
   static dateList(terms = 1) {
-    if(terms < 1) {
+    if (terms < 1) {
       return [this.today()];
     }
     const start = this.beforeDays(terms - 1);

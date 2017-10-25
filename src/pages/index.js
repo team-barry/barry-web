@@ -1,4 +1,4 @@
-import TopPage from './Top/Top';
-import UserPage from './User/User';
+import TopPage from "./Top/Top";
+import UserPage from "./User/User";
 
-export {TopPage,  UserPage};
+export { TopPage, UserPage };

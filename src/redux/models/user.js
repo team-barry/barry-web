@@ -1,4 +1,4 @@
-import {Record} from 'immutable';
+import { Record } from "immutable";
 
 const UserRecord = Record({
   uid: null,
@@ -7,18 +7,18 @@ const UserRecord = Record({
   logging: false,
 });
 
-export default class User extends UserRecord{
+export default class User extends UserRecord {
   isLogin() {
-    if(this.uid) {
+    if (this.uid) {
       return true;
-    };
+    }
     return false;
-  };
+  }
 
   isLogging() {
     return this.logging;
-  };
-};
+  }
+}
 
 export class UserUtil {
   static fromAuth(user) {
@@ -27,5 +27,5 @@ export class UserUtil {
       name: user.displayName,
       email: user.email,
     };
-  };
-};
+  }
+}
