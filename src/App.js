@@ -5,7 +5,7 @@ import myStore from "./redux/store";
 import RoutePages from "./routes";
 import history from "helpers/history";
 import style from "semantic-ui-css/semantic.css";
-import i18n from "./locales";
+import MessageBar from "containers/MessageBar/MessageBar";
 
 const store = myStore();
 class App extends Component {
@@ -18,6 +18,7 @@ class App extends Component {
         <ConnectedRouter history={history}>
           <div className="App" style={style}>
             <RoutePages />
+            <MessageBar />
           </div>
         </ConnectedRouter>
       </Provider>

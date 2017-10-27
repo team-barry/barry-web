@@ -3,17 +3,19 @@ import actions from "./actions";
 
 const initialState = {
   isShowing: false,
-  information: "",
+  isError: false,
+  message: "",
 };
 
 export default handleActions(
   {
-    [actions.showError]: (state, action) => ({
+    [actions.showMessage]: (state, action) => ({
       ...state,
       isShowing: true,
-      information: action.paylaod.information,
+      isError: action.error,
+      message: action.payload.message,
     }),
-    [actions.hideError]: (state, action) => ({
+    [actions.hideMessage]: (state, action) => ({
       ...state,
       isShowing: false,
     }),

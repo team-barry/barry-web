@@ -17,7 +17,6 @@ export default handleActions(
     }),
     [actions.handleStopTracking]: (state, action) => ({
       ...state,
-      isReady: false,
       isTracking: false,
     }),
     [actions.getCurrentCoordinates]: (state, action) => {

@@ -35,3 +35,5 @@ i18next.on("languageChanged", () => {
 export function changeLng(lng) {
   i18next.changeLanguage(lng);
 }
+
+export default i18next;

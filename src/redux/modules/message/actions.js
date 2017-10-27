@@ -1,14 +1,10 @@
 import { createAction } from "redux-actions";
 import types from "./types";
 
-const showError = createAction(types.SHOW_ERROR);
-const hideError = createAction(types.HIDE_ERROR);
-const showNotice = createAction(types.SHOW_NOTICE);
-const hideNotice = createAction(types.HIDE_NOTICE);
+const showMessage = createAction(types.SHOW_MESSAGE);
+const hideMessage = createAction(types.HIDE_MESSAGE);
 
 export default {
-  showError,
-  hideError,
-  showNotice,
-  hideNotice,
+  showMessage,
+  hideMessage,
 };
