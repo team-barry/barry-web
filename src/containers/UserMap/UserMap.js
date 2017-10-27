@@ -45,7 +45,6 @@ class UserMap extends Component {
   // 移動ボタンを押すと現在地に移動する
   hundleToMoveCurrentLocation = event => {
     console.log("move current location!");
-    console.log(this.props.user, this.props.selectedDate);
     this.props.handleGetCoordinates({
       user: this.props.user,
       selectedDate: this.props.selectedDate,
