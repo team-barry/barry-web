@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { withRouter } from "react-router";
 import { Dropdown, Menu, Icon } from "semantic-ui-react";
 import authActions from "redux/modules/auth/actions";
-import * as mapActions from "redux/modules/map";
+import trackingActions from "redux/modules/tracking/actions";
 import "./UserHeader.css";
 
 class UserHeader extends Component {
@@ -18,7 +18,7 @@ class UserHeader extends Component {
   hundleSignout = event => {
     event.preventDefault();
     this.props.handleSignout();
-    this.props.stopUpdatePosition();
+    this.props.handleStopTracking();
   };
 
   render() {
@@ -55,7 +55,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     ...bindActionCreators(authActions, dispatch),
-    ...bindActionCreators(mapActions, dispatch),
+    ...bindActionCreators(trackingActions, dispatch),
   };
 };
 

@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { withRouter, Route } from "react-router";
 import authActions from "redux/modules/auth/actions";
-import * as mapActions from "redux/modules/map";
 import Loading from "pages/Loading/Loading";
 
 class Guest extends Component {
@@ -51,7 +50,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     ...bindActionCreators(authActions, dispatch),
-    ...bindActionCreators(mapActions, dispatch),
   };
 };
 

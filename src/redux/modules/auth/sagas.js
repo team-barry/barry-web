@@ -5,7 +5,7 @@ import { UserUtil } from "redux/models/user";
 import actions from "./actions";
 import types from "./types";
 
-const authList = new FirebaseList("users");
+const firebaseList = new FirebaseList("users");
 
 function* handleLogin(action) {
   console.log("handle login called");
@@ -19,7 +19,7 @@ function* handleLogin(action) {
     }
     const user = UserUtil.fromAuth(authedUser);
 
-    yield call([authList, authList.update], user.uid, user);
+    yield call([firebaseList, firebaseList.update], user.uid, user);
     yield put(actions.login({ user: user }));
 
     history.push("/user");

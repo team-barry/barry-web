@@ -1,7 +1,9 @@
 import auth from "./modules/auth/reducer";
-import map from "./modules/map";
+import location from "./modules/location/reducer";
+import tracking from "./modules/tracking/reducer";
 
 export const reducers = {
   auth,
-  map,
+  location,
+  tracking,
 };
