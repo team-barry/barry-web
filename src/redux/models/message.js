@@ -1,22 +1,22 @@
-import {Record} from 'immutable';
+import { Record } from "immutable";
 
 const MessageRecord = Record({
   info: null,
-  error: null
+  error: null,
 });
 
-export default class Message extends MessageRecord{
+export default class Message extends MessageRecord {
   hasError() {
-    if(this.error) {
+    if (this.error) {
       return true;
     }
     return false;
   }
-  
+
   hasInfo() {
-    if(this.info) {
+    if (this.info) {
       return true;
     }
     return false;
   }
-};
+}

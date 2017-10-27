@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import firebase from "firebase";
 
 const {
   REACT_APP_FIREBASE_API_KEY,
@@ -6,8 +6,8 @@ const {
   REACT_APP_FIREBASE_DATABASE_URL,
   REACT_APP_FIREBASE_PROJECT_ID,
   REACT_APP_FIREBASE_STORAGE_BUCKET,
-  REACT_APP_FIREBASE_MESSAGING_SENDER_ID
-} = process.env
+  REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+} = process.env;
 
 const firebaseConfig = {
   apiKey: REACT_APP_FIREBASE_API_KEY,
@@ -15,8 +15,8 @@ const firebaseConfig = {
   databaseURL: REACT_APP_FIREBASE_DATABASE_URL,
   projectId: REACT_APP_FIREBASE_PROJECT_ID,
   storageBucket: REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: REACT_APP_FIREBASE_MESSAGING_SENDER_ID
-}
+  messagingSenderId: REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+};
 
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
 export const firebaseDb = firebase.database();
@@ -37,37 +37,52 @@ export class FirebaseList {
 
   push(key, value) {
     return new Promise((resolve, reject) => {
-      firebaseDb.ref(`${this._path}/${key}`)
-        .push(value, error => error ? reject(error) : resolve());
+      firebaseDb.ref(`${this._path}/${key}`).push(value, error => (error ? reject(error) : resolve()));
     });
   }
 
   remove(key) {
     return new Promise((resolve, reject) => {
-      firebaseDb.ref(`${this._path}/${key}`)
-        .remove(error => error ? reject(error) : resolve());
+      firebaseDb.ref(`${this._path}/${key}`).remove(error => (error ? reject(error) : resolve()));
     });
   }
 
   set(key, value) {
     return new Promise((resolve, reject) => {
-      firebaseDb.ref(`${this._path}/${key}`)
-        .set(value, error => error ? reject(error) : resolve());
+      firebaseDb.ref(`${this._path}/${key}`).set(value, error => (error ? reject(error) : resolve()));
     });
   }
 
   update(key, value) {
     return new Promise((resolve, reject) => {
-      firebaseDb.ref(`${this._path}/${key}`)
-        .update(value, error => error ? reject(error) : resolve());
+      firebaseDb.ref(`${this._path}/${key}`).update(value, error => (error ? reject(error) : resolve()));
     });
   }
 
   get(key = null) {
-    const refPath = key ? `${this._path}/${key}` : `${this._path}`
+    let refPath;
+    if (!this._path) {
+      refPath = key;
+    } else {
+      refPath = key ? `${this._path}/${key}` : `${this._path}`;
+    }
+
     console.log("get", refPath);
-    return firebaseDb.ref(refPath).once("value").then(snapshot => {
-      return snapshot.val();
-    });
+    return firebaseDb
+      .ref(refPath)
+      .once("value")
+      .then(snapshot => {
+        return snapshot.val();
+      });
+  }
+
+  getAbsKey(key) {
+    console.log("get with absolute key", key);
+    return firebaseDb
+      .ref(key)
+      .once("value")
+      .then(snapshot => {
+        return snapshot.val();
+      });
   }
 }

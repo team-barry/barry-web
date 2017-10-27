@@ -1,50 +1,50 @@
-import fetch from 'isomorphic-fetch';
+import fetch from "isomorphic-fetch";
 
-const server = process.env.REACT_APP_SERVER
+const server = process.env.REACT_APP_SERVER;
 
 function formatUrl(path) {
-  const adjustedPath = path[0] !== '/' ? '/' + path : path;
+  const adjustedPath = path[0] !== "/" ? "/" + path : path;
   return server + adjustedPath;
 }
 
 function makeHeaders(method) {
   return {
-    mode: 'cors',
+    mode: "cors",
     method: method,
     headers: {
-      'Content-Type': 'application/json',
-    }
-  }
+      "Content-Type": "application/json",
+    },
+  };
 }
 
 function makeAuthHeaders(method, auth) {
-  const authorization = `${auth.access_token}`
+  const authorization = `${auth.access_token}`;
   return {
-    mode: 'cors',
+    mode: "cors",
     method: method,
     headers: {
-      'Authorization': authorization,
-      'Content-Type': 'application/json',
-    }
-  }
+      Authorization: authorization,
+      "Content-Type": "application/json",
+    },
+  };
 }
 
 function fetchAPI(url, request) {
   return fetch(url, request)
-    .then((response) => {
-      if(!response.ok) {
+    .then(response => {
+      if (!response.ok) {
         throw Error(response.statusText);
       }
       return response.json();
-    }).then((data) => {
+    })
+    .then(data => {
       console.log(data);
-      if(data.error) {
+      if (data.error) {
         throw Error(data.error);
       }
       return data;
     });
-};
-
+}
 
 // API class request following json format
 // params {
@@ -56,35 +56,35 @@ export default class API {
   static get(params) {
     const url = formatUrl(params.endpoint);
     const request = {
-      ...makeHeaders('GET'),
-    }
+      ...makeHeaders("GET"),
+    };
     return fetchAPI(url, request);
-  };
-  
+  }
+
   static post(params) {
     const url = formatUrl(params.endpoint);
     const request = {
-      ...makeHeaders('POST'),
-      body: JSON.stringify(params.body)
-    }
+      ...makeHeaders("POST"),
+      body: JSON.stringify(params.body),
+    };
     return fetchAPI(url, request);
-  };
-  
+  }
+
   static getWithAuth(params) {
     const url = formatUrl(params.endpoint);
     const request = {
-      ...makeAuthHeaders('GET', params.auth)
-    }
+      ...makeAuthHeaders("GET", params.auth),
+    };
     console.log("request", request);
     return fetchAPI(url, request);
   }
-  
+
   static postWithAuth(params) {
     const url = formatUrl(params.endpoint);
     const request = {
-      ...makeAuthHeaders('POST', params.auth),
-      body: JSON.stringify(params.body)
-    }
+      ...makeAuthHeaders("POST", params.auth),
+      body: JSON.stringify(params.body),
+    };
     return fetchAPI(url, request);
   }
-};
+}
