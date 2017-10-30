@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import styles from './Loading.css';
-import LoadingCircle from 'components/LoadingCircle/LoadingCircle';
+import styles from "./Loading.css";
+import LoadingCircle from "components/LoadingCircle/LoadingCircle";
 
 const Loading = () => {
   return (
@@ -10,7 +10,7 @@ const Loading = () => {
         <LoadingCircle />
       </section>
     </div>
-  )
-}
+  );
+};
 
 export default Loading;

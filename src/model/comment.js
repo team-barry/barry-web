@@ -1,5 +1,5 @@
-import firebase from 'firebase';
-import { firebaseDb } from 'helpers/firebase';
+import firebase from "firebase";
+import { firebaseDb } from "helpers/firebase";
 
 export default class Comment {
   static push(user, text, coordinates, image = null) {
@@ -11,6 +11,6 @@ export default class Comment {
       image_url: null,
       show_cd: 0, //0 = all
       coordinates_raw: JSON.stringify(coordinates),
-    })
+    });
   }
 }
