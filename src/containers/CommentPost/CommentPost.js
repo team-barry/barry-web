@@ -42,10 +42,17 @@ class CommentPost extends Component {
 
   render() {
     return (
-      <Form>
-        <Form.TextArea rows={5} value={this.state.comment} onChange={this.handleChange} autoHeight />
-        <Button content="Bow!" icon="edit" labelPosition="left" onClick={this.handleClick} primary fluid />
-      </Form>
+      <Card>
+        <Card.Content>
+          <Card.Header>What's happen?</Card.Header>
+        </Card.Content>
+        <Card.Content>
+          <Form>
+            <Form.TextArea rows={5} value={this.state.comment} onChange={this.handleChange} autoHeight />
+            <Button content="Bow!" icon="edit" labelPosition="left" onClick={this.handleClick} primary fluid />
+          </Form>
+        </Card.Content>
+      </Card>
     );
   }
 }
