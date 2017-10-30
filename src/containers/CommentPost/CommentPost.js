@@ -4,28 +4,28 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Button, Form } from "semantic-ui-react";
 import { DateFactory } from "helpers/date";
-import authActions from "redux/modules/auth/actions";
-import locationActions from "redux/modules/location/actions";
 
-class CommentPostView extends Component {
+class CommentPost extends Component {
   constructor() {
     super();
     this.state = {
       comment: "",
     };
   }
+
   handleChange(e, { value }) {
     this.setState({
       ...this.state,
       comment: value,
     });
   }
+
   render() {
     return (
-      <Form reply>
-        <Form.TextArea onChange={(e, hash) => this.handleChange(e, hash)} />
+      <Form>
+        <Form.TextArea rows={5} onChange={(e, hash) => this.handleChange(e, hash)} />
         <Button
-          content="Add Comment"
+          content="Bow!"
           labelPosition="left"
           icon="edit"
           onClick={() => {
@@ -39,21 +39,16 @@ class CommentPostView extends Component {
 }
 
 const mapStateToProps = state => {
-  const { coordinates: currentCoordinates, selectedCoordinates, selectedDay } = state.map;
-  const isToday = DateFactory.today() === selectedDay;
-  // 過去に行った場所にコメントできる必要はあるか微妙。UIに合わせた
-  const coordinates = isToday ? currentCoordinates : selectedCoordinates;
+  const coordinates = state.tracking.trackedCoordinates;
+  const current = coordinates.last();
   return {
     user: state.auth.user,
-    coordinates,
+    current: current,
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-    ...bindActionCreators(authActions),
-    ...bindActionCreators(locationActions),
-  };
+  return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CommentPostView);
+export default connect(mapStateToProps, mapDispatchToProps)(CommentPost);
