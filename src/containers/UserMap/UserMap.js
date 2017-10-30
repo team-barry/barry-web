@@ -4,7 +4,8 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import ReactMapboxGl, { Marker, ZoomControl } from "react-mapbox-gl";
 import FixedButton from "components/Buttons/FixedButton/FixedButton";
-import * as mapActions from "redux/modules/map";
+import locationActions from "redux/modules/location/actions";
+import trackingActions from "redux/modules/tracking/actions";
 import styles from "./UserMap.css";
 import pulseCircleStyles from "./PulseCircle.css";
 import markerCircleStyles from "./markerCircle.css";
@@ -30,6 +31,7 @@ class UserMap extends Component {
   }
 
   static PropTypes = {
+    user: PropTypes.object.isRequired,
     viewport: PropTypes.array.isRequired,
     current: PropTypes.array.isRequired,
     coordinates: PropTypes.object.isRequired,
@@ -43,7 +45,10 @@ class UserMap extends Component {
   // 移動ボタンを押すと現在地に移動する
   hundleToMoveCurrentLocation = event => {
     console.log("move current location!");
-    this.props.getSelectedCoordinates(DateFactory.today());
+    this.props.handleGetCoordinates({
+      user: this.props.user,
+      selectedDate: this.props.selectedDate,
+    });
   };
 
   generatePositions = () => {
@@ -79,7 +84,7 @@ class UserMap extends Component {
           attributionControl={false}
           onZoomEnd={this.onZoomEnd}
         >
-          <Marker coordinates={this.props.current}>
+          <Marker coordinates={this.props.viewport}>
             <div className="pulseCircle" style={pulseCircleStyles} />
           </Marker>
           {markers}
@@ -92,23 +97,29 @@ class UserMap extends Component {
 }
 
 const mapStateToProps = state => {
-  const { coordinates: currentCoordinates, selectedCoordinates, selectedDay } = state.map;
-  const isToday = DateFactory.today() === selectedDay;
-  const current = currentCoordinates.last().getLocationArray();
-  const coordinates = isToday ? currentCoordinates : selectedCoordinates;
-  let viewport = current;
-  if (!isToday && coordinates.size > 0) viewport = coordinates.last().getLocationArray();
+  const selectedDate = state.location.selectedDate;
+  const isToday = selectedDate === DateFactory.today();
+  const coordinates = isToday ? state.tracking.trackedCoordinates : state.location.coordinates;
+
+  let viewport;
+  const _viewport = state.tracking.trackedCoordinates.last().getLocationArray();
+  if (!isToday && coordinates.size > 0) {
+    viewport = coordinates.last().getLocationArray();
+  } else {
+    viewport = _viewport;
+  }
   return {
-    selectedDay,
+    user: state.auth.user,
+    selectedDate,
     coordinates,
-    current,
     viewport,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    ...bindActionCreators(mapActions, dispatch),
+    ...bindActionCreators(locationActions, dispatch),
+    ...bindActionCreators(trackingActions, dispatch),
   };
 };
 

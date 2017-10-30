@@ -3,8 +3,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { withRouter, Route } from "react-router";
-import * as authActions from "redux/modules/auth";
-import * as mapActions from "redux/modules/map";
+import authActions from "redux/modules/auth/actions";
 import Loading from "pages/Loading/Loading";
 
 class Guest extends Component {
@@ -24,7 +23,7 @@ class Guest extends Component {
   isAuthenticated(props) {
     const user = props.user;
     if (user.needAuth()) {
-      return this.props.authUser();
+      return this.props.handleAuth();
     }
     if (user.isLogging()) {
       return;
@@ -51,7 +50,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     ...bindActionCreators(authActions, dispatch),
-    ...bindActionCreators(mapActions, dispatch),
   };
 };
 

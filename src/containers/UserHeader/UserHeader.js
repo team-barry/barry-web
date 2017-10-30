@@ -4,21 +4,21 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router";
 import { Dropdown, Menu, Icon } from "semantic-ui-react";
-import * as authActions from "redux/modules/auth";
-import * as mapActions from "redux/modules/map";
+import authActions from "redux/modules/auth/actions";
+import trackingActions from "redux/modules/tracking/actions";
 import "./UserHeader.css";
 
 class UserHeader extends Component {
   static PropTypes = {
     user: PropTypes.object,
-    signout: PropTypes.func,
+    handleSignout: PropTypes.func,
     toggleVisibility: PropTypes.func.isRequried,
   };
 
   hundleSignout = event => {
     event.preventDefault();
-    this.props.signout();
-    this.props.stopUpdatePosition();
+    this.props.handleSignout();
+    this.props.handleStopTracking();
   };
 
   render() {
@@ -49,14 +49,13 @@ class UserHeader extends Component {
 const mapStateToProps = state => {
   return {
     user: state.auth.user,
-    message: state.auth.message,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     ...bindActionCreators(authActions, dispatch),
-    ...bindActionCreators(mapActions, dispatch),
+    ...bindActionCreators(trackingActions, dispatch),
   };
 };
 

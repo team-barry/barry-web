@@ -60,10 +60,25 @@ export class FirebaseList {
   }
 
   get(key = null) {
-    const refPath = key ? `${this._path}/${key}` : `${this._path}`;
+    let refPath;
+    if (!this._path) {
+      refPath = key;
+    } else {
+      refPath = key ? `${this._path}/${key}` : `${this._path}`;
+    }
     console.log("get", refPath);
     return firebaseDb
       .ref(refPath)
+      .once("value")
+      .then(snapshot => {
+        return snapshot.val();
+      });
+  }
+
+  getAbsKey(key) {
+    console.log("get with absolute key", key);
+    return firebaseDb
+      .ref(key)
       .once("value")
       .then(snapshot => {
         return snapshot.val();

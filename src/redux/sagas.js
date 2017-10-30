@@ -1,7 +1,8 @@
 import { fork, all } from "redux-saga/effects";
-import { authSagas } from "./modules/auth";
-import { mapSagas, triggerBgUpdatePosition } from "./modules/map";
+import { authSagas } from "./modules/auth/sagas";
+import { locationSagas } from "./modules/location/sagas";
+import { triggerTracking } from "./modules/tracking/sagas";
 
 export default function* rootSaga() {
-  yield all([fork(authSagas), fork(mapSagas), fork(triggerBgUpdatePosition)]);
+  yield all([fork(authSagas), fork(locationSagas), fork(triggerTracking)]);
 }

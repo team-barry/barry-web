@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import * as authActions from "redux/modules/auth";
-import * as mapActions from "redux/modules/map";
+
+import authActions from "redux/modules/auth/actions";
+import locationActions from "redux/modules/location/actions";
 import { Card } from "semantic-ui-react";
 import moment from "moment";
 import DatePicker from "react-datepicker";
@@ -20,14 +21,15 @@ class MyDatePicker extends Component {
   }
 
   componentWillMount() {
-    this.props.getUsingDates();
+    const user = this.props.user;
+    this.props.handleGetUsingDates({ user: user });
   }
 
   componentWillUpdate(nextProps) {
-    const prevSelectedDay = DateFactory.formatDate(this.state.startDate);
-    const nextSelectedDay = nextProps.selectedDay;
-    if (prevSelectedDay !== nextSelectedDay) {
-      this.setState({ ...this.state, startDate: moment(nextSelectedDay) });
+    const prevselectedDate = DateFactory.formatDate(this.state.startDate);
+    const nextselectedDate = nextProps.selectedDate;
+    if (prevselectedDate !== nextselectedDate) {
+      this.setState({ ...this.state, startDate: moment(nextselectedDate) });
       return true;
     }
     return false;
@@ -35,9 +37,8 @@ class MyDatePicker extends Component {
 
   static PropTypes = {
     user: PropTypes.object,
-    coordinates: PropTypes.object,
-    usingDates: PropTypes.object,
-    selectedDay: PropTypes.string,
+    dates: PropTypes.object,
+    selectedDate: PropTypes.string,
   };
 
   handleChange = date => {
@@ -45,12 +46,15 @@ class MyDatePicker extends Component {
     this.setState({
       startDate: date,
     });
-    this.props.getSelectedCoordinates(formatDate);
+    this.props.handleGetCoordinates({
+      user: this.props.user,
+      selectedDate: formatDate,
+    });
   };
 
   sieveDate = date => {
-    const usingDates = this.props.usingDates;
-    if (usingDates.get(DateFactory.formatDate(date))) {
+    const dates = this.props.dates;
+    if (dates.get(DateFactory.formatDate(date))) {
       return "having";
     }
     return "not-having";
@@ -78,15 +82,15 @@ class MyDatePicker extends Component {
 const mapStateToProps = state => {
   return {
     user: state.auth.user,
-    selectedDay: state.map.selectedDay,
-    usingDates: state.map.usingDates,
+    dates: state.location.dates,
+    selectedDate: state.location.selectedDate,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     ...bindActionCreators(authActions, dispatch),
-    ...bindActionCreators(mapActions, dispatch),
+    ...bindActionCreators(locationActions, dispatch),
   };
 };
 

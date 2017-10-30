@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { Header } from "components";
 import { Button } from "semantic-ui-react";
 import PropTypes from "prop-types";
-import * as authActions from "redux/modules/auth";
+import authActions from "redux/modules/auth/actions";
 import style from "./Top.css";
 import firebase from "firebase";
 
@@ -12,7 +12,7 @@ class Top extends Component {
   static PropTypes = {
     user: PropTypes.object,
     message: PropTypes.object,
-    login: PropTypes.func,
+    handleLogin: PropTypes.func,
   };
 
   componentWillMount() {
@@ -34,7 +34,7 @@ class Top extends Component {
     const payload = {
       provider: google,
     };
-    this.props.login(payload);
+    this.props.handleLogin(payload);
   };
 
   onChangeUser = user => {
@@ -64,7 +64,6 @@ class Top extends Component {
 const mapStateToProps = state => {
   return {
     user: state.auth.user,
-    message: state.auth.message,
   };
 };
 

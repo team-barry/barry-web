@@ -2,13 +2,10 @@ import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import * as authActions from "redux/modules/auth";
-import * as mapActions from "redux/modules/map";
-
 import { Button, Form } from "semantic-ui-react";
-
-import Comment from "model/comment";
 import { DateFactory } from "helpers/date";
+import authActions from "redux/modules/auth/actions";
+import locationActions from "redux/modules/location/actions";
 
 class CommentPostView extends Component {
   constructor() {
@@ -32,7 +29,7 @@ class CommentPostView extends Component {
           labelPosition="left"
           icon="edit"
           onClick={() => {
-            Comment.push(this.props.user, this.state.comment, this.props.coordinates);
+            // Comment.push(this.props.user, this.state.comment, this.props.coordinates);
           }}
           primary
         />
@@ -54,8 +51,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    ...bindActionCreators(authActions, dispatch),
-    ...bindActionCreators(mapActions, dispatch),
+    ...bindActionCreators(authActions),
+    ...bindActionCreators(locationActions),
   };
 };
 

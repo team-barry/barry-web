@@ -3,15 +3,17 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Route } from "react-router";
-import * as authActions from "redux/modules/auth";
-import * as mapActions from "redux/modules/map";
+import authActions from "redux/modules/auth/actions";
+import tackingActions from "redux/modules/tracking/actions";
 import Loading from "pages/Loading/Loading";
 
 class Private extends Component {
   static PropTypes = {
     user: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
-    isUpdatingPosition: PropTypes.bool.isRequired,
+    isTracking: PropTypes.object.isRequired,
+    isReady: PropTypes.object.isRequired,
+    handleStartTracking: PropTypes.func.isRequired,
   };
 
   componentWillMount() {
@@ -19,23 +21,16 @@ class Private extends Component {
 
     this.isAuthenticated();
     if (this.props.user.isLogin()) {
-      this.startUpdatePosition(this.props);
+      this.props.handleStartTracking({ user: this.props.user });
     }
   }
 
   isAuthenticated() {
-    return this.props.authUser();
-  }
-
-  startUpdatePosition(props) {
-    if (!props.isUpdatingPosition) {
-      props.setMapList(props.user);
-      props.startUpdatePosition();
-    }
+    return this.props.handleAuth();
   }
 
   render() {
-    if (this.props.user.isLogging() || !this.props.ready) {
+    if (this.props.user.isLogging() || !this.props.isReady) {
       return <Loading />;
     }
     return <Route {...this.props} />;
@@ -45,15 +40,15 @@ class Private extends Component {
 const mapStateToProps = state => {
   return {
     user: state.auth.user,
-    isUpdatingPosition: state.map.isUpdating,
-    ready: state.map.ready,
+    isTracking: state.tracking.isTracking,
+    isReady: state.tracking.isReady,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     ...bindActionCreators(authActions, dispatch),
-    ...bindActionCreators(mapActions, dispatch),
+    ...bindActionCreators(tackingActions, dispatch),
   };
 };
 
