@@ -2,10 +2,16 @@ import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Button, Form } from "semantic-ui-react";
-import { DateFactory } from "helpers/date";
+import bowActions from "redux/modules/bow/actions";
+import { Card, Button, Form } from "semantic-ui-react";
 
 class CommentPost extends Component {
+  static PropTypes = {
+    user: PropTypes.object.isRequired,
+    current: PropTypes.object.isRequired,
+    handleBow: PropTypes.func.isRequired,
+  };
+
   constructor() {
     super();
     this.state = {
@@ -13,26 +19,32 @@ class CommentPost extends Component {
     };
   }
 
-  handleChange(e, { value }) {
+  handleChange = (e, { value }) => {
     this.setState({
       ...this.state,
       comment: value,
     });
-  }
+  };
+
+  handleClick = e => {
+    if (this.state.comment !== "") {
+      this.props.handleBow({
+        user: this.props.user,
+        comment: this.state.comment,
+        coordinate: this.props.current,
+      });
+    }
+    this.setState({
+      ...this.state,
+      comment: "",
+    });
+  };
 
   render() {
     return (
       <Form>
-        <Form.TextArea rows={5} onChange={(e, hash) => this.handleChange(e, hash)} />
-        <Button
-          content="Bow!"
-          labelPosition="left"
-          icon="edit"
-          onClick={() => {
-            // Comment.push(this.props.user, this.state.comment, this.props.coordinates);
-          }}
-          primary
-        />
+        <Form.TextArea rows={5} value={this.state.comment} onChange={this.handleChange} autoHeight />
+        <Button content="Bow!" icon="edit" labelPosition="left" onClick={this.handleClick} primary fluid />
       </Form>
     );
   }
@@ -41,6 +53,7 @@ class CommentPost extends Component {
 const mapStateToProps = state => {
   const coordinates = state.tracking.trackedCoordinates;
   const current = coordinates.last();
+
   return {
     user: state.auth.user,
     current: current,
@@ -48,7 +61,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-  return {};
+  return bindActionCreators(bowActions, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CommentPost);
