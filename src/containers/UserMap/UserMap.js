@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import ReactMapboxGl, { Marker, ZoomControl } from "react-mapbox-gl";
+import ReactMapboxGl, { Marker, ZoomControl, Popup } from "react-mapbox-gl";
 import FixedButton from "components/Buttons/FixedButton/FixedButton";
 import locationActions from "redux/modules/location/actions";
 import trackingActions from "redux/modules/tracking/actions";
@@ -11,6 +11,7 @@ import pulseCircleStyles from "./PulseCircle.css";
 import markerCircleStyles from "./markerCircle.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { DateFactory } from "helpers/date";
+import PopupComment from "components/PopupComment/PopupComment";
 
 const token = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 const Map = ReactMapboxGl({
@@ -71,8 +72,29 @@ class UserMap extends Component {
     });
   };
 
+  generateComments = () => {
+    // const bows = this.props.bows;
+    const coordinate = this.props.coordinates.last();
+    const bows = [
+      {
+        comment_id: "uasdjasldkajsldk",
+        comment: "Test",
+        coordinate: coordinate,
+      },
+    ];
+    const popupBows = bows.map(v => {
+      return (
+        <Popup key={v.comment_id} coordinates={v.coordinate.getLocationArray()} anchor="bottom">
+          <PopupComment value={v.comment} />
+        </Popup>
+      );
+    });
+    return popupBows;
+  };
+
   render() {
     const markers = this.generatePositions();
+    const comments = this.generateComments();
     const mapDesign = "mapbox://styles/mapbox/streets-v9";
     return (
       <div className="map" style={styles}>
@@ -88,6 +110,7 @@ class UserMap extends Component {
             <div className="pulseCircle" style={pulseCircleStyles} />
           </Marker>
           {markers}
+          {comments}
           <ZoomControl />
         </Map>
         <FixedButton onClick={this.hundleToMoveCurrentLocation} />
