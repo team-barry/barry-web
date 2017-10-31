@@ -2,10 +2,10 @@
 // if an passed action has error statement or message information.
 
 import actions from "redux/modules/message/actions";
-import types from "redux/modules/message/types";
+import { messangerEvent } from "redux/modules/message/types";
 
 export const messanger = store => next => action => {
-  if (Object.values(types).some(val => val === action.type)) {
+  if (Object.values(messangerEvent).some(val => val === action.type)) {
     return next(action);
   }
   if (!action.payload) {

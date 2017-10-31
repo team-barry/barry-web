@@ -6,16 +6,19 @@ import ReactMapboxGl, { Marker, ZoomControl, Popup } from "react-mapbox-gl";
 import FixedButton from "components/Buttons/FixedButton/FixedButton";
 import locationActions from "redux/modules/location/actions";
 import trackingActions from "redux/modules/tracking/actions";
+import messageActions from "redux/modules/message/actions";
 import styles from "./UserMap.css";
 import pulseCircleStyles from "./PulseCircle.css";
 import markerCircleStyles from "./markerCircle.css";
-import "mapbox-gl/dist/mapbox-gl.css";
 import { DateFactory } from "helpers/date";
 import PopupComment from "components/PopupComment/PopupComment";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 const token = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+const minZoomParam = 11.0;
 const Map = ReactMapboxGl({
   accessToken: token,
+  minZoom: minZoomParam,
 });
 const mapStyle = {
   flex: 1,
@@ -37,10 +40,23 @@ class UserMap extends Component {
     current: PropTypes.array.isRequired,
     coordinates: PropTypes.object.isRequired,
     getSelectedCoordinates: PropTypes.func.isRequired,
+    createMessage: PropTypes.func.isRequired,
   };
 
-  componentWillUpdate(nextProps) {
-    if (this.state.viewport === nextProps.viewport) return false;
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.state.viewport !== nextProps.viewport) return true;
+    if (this.state.zoom !== nextState.zoom) return true;
+    return false;
+  }
+
+  componentWillUpdate(nextProp, nextState) {
+    // [TODO]
+    // Firebaseとの通信を少なくするために，ズームの最大値を設けて，コメントの半径距離を制限している
+    // 重要度などでコメントの取得のフィルタリングを行うことで
+    // コメントの取得量を制限したい
+    if (nextState.zoom < this.state.zoom && nextState.zoom <= minZoomParam) {
+      this.props.createMessage(new Error("MIN_ZOOM_ERROR"));
+    }
   }
 
   // 移動ボタンを押すと現在地に移動する
@@ -143,6 +159,7 @@ const mapDispatchToProps = dispatch => {
   return {
     ...bindActionCreators(locationActions, dispatch),
     ...bindActionCreators(trackingActions, dispatch),
+    ...bindActionCreators(messageActions, dispatch),
   };
 };
 
