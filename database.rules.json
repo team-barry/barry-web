@@ -8,7 +8,7 @@
         ".write": "$uid === auth.uid"
       }
     },
-    "comment": {
+    "bows": {
       ".read": true,
       ".write": true
     }

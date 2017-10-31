@@ -25,7 +25,17 @@ export default class Coordinate extends CoordinateRecord {
     return false;
   }
 
+  // [NOTE]
+  // React-Mapboxは[longitude, latitude]の順で指定されているため
+  // こちらのメソッドを仕様する
   getLocationArray() {
     return [this.longitude, this.latitude];
+  }
+
+  // [NOTE]
+  // GeoFireは[latitude, longitude]の順に指定されているため
+  // こちらのメソッドを仕様する
+  getGeoLocationArray() {
+    return [this.latitude, this.longitude];
   }
 }
