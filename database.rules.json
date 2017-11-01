@@ -4,7 +4,7 @@
     ".write": false,
     "users": {
       "$uid": {
-        ".read": "$uid === auth.uid",
+        ".read": true,
         ".write": "$uid === auth.uid"
       }
     },

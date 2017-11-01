@@ -16,6 +16,7 @@ export default handleActions(
     [actions.login]: (state, action) => ({
       user: new User({
         ...action.payload.user,
+        me: true,
         logging: false,
       }),
     }),

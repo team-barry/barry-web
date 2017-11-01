@@ -1,0 +1,6 @@
+export default {
+  HANDLE_GET_BOWS: "HANDLE_GET_BOWS",
+  GET_BOWS: "GET_BOWS",
+  ADD_BOW: "ADD_BOW",
+  REMOVE_BOW: "REMOVE_BOW",
+};

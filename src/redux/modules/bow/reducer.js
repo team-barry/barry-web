@@ -2,8 +2,7 @@ import { handleActions } from "redux-actions";
 import actions from "./actions";
 
 const initialState = {
-  isBowed: false,
-  comment: "",
+  isBowing: false,
 };
 
 export default handleActions(
@@ -15,8 +14,6 @@ export default handleActions(
       };
     },
     [actions.bow]: (state, action) => {
-      const comment = action.payload.comment || state.comment;
-      console.log(`bow!: ${comment}`);
       return {
         ...state,
         isBowing: false,

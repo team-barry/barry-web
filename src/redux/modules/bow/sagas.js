@@ -1,9 +1,9 @@
-import { call, fork, put, takeLatest, all } from "redux-saga/effects";
+import { fork, put, takeLatest, all } from "redux-saga/effects";
 import { firebaseDb, FirebaseList } from "helpers/firebase";
 import actions from "./actions";
 import types from "./types";
 import GeoFire from "geofire";
-import { DateFactory } from "helpers/date";
+import Bow from "redux/models/bow";
 
 const firebaseList = new FirebaseList("/bows/comments");
 const geoFire = new GeoFire(firebaseDb.ref("/bows/geofire"));
@@ -11,16 +11,14 @@ const geoFire = new GeoFire(firebaseDb.ref("/bows/geofire"));
 function* handleBow(action) {
   const { user, coordinate, comment } = action.payload;
   try {
-    const bowPath = "";
-    const commentId = yield call([firebaseList, firebaseList.push], bowPath, {
-      uid: user.uid,
+    const bow = new Bow({
       comment: comment,
-      created_at: DateFactory.now(),
+      coordinate: coordinate,
+      user: user,
     });
-    const coordinateArray = coordinate.getGeoLocationArray();
-    console.log(coordinateArray);
-    yield call([geoFire, geoFire.set], commentId, coordinateArray);
-    yield put(actions.bow({ comment }));
+    yield fork([firebaseList, firebaseList.set], bow.id, bow.save());
+    yield fork([geoFire, geoFire.set], bow.id, bow.getLocationForGeoFire());
+    yield put(actions.bow());
     return;
   } catch (e) {
     console.log(e);
