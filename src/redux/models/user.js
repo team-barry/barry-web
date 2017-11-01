@@ -5,11 +5,12 @@ const UserRecord = Record({
   name: null,
   email: null,
   logging: false,
+  me: false,
 });
 
 export default class User extends UserRecord {
   isLogin() {
-    if (this.uid) {
+    if (this.me && this.uid) {
       return true;
     }
     return false;

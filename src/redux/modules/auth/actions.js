@@ -16,6 +16,3 @@ export default {
   handleAuth,
   auth,
 };
-
-console.log(handleLogin());
-console.log(login(new Error("message")));

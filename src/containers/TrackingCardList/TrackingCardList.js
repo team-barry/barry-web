@@ -31,7 +31,7 @@ class TrackingCardList extends Component {
     return (
       <Card>
         <Card.Content>
-          <Card.Header>Trackings - {moment(this.props.selectedDate).format("MM-DD")}</Card.Header>
+          <Card.Header>Tracking at {moment(this.props.selectedDate).format("MM/DD")}</Card.Header>
         </Card.Content>
         <Card.Content>
           <Feed>{this.coordinatesEventList(this.props.coordinates, LIMIT)}</Feed>
@@ -53,9 +53,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-    ...bindActionCreators(locationActions, dispatch),
-  };
+  return {};
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TrackingCardList);

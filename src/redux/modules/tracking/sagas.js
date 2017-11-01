@@ -48,6 +48,7 @@ function* bgStartTracking(payload) {
     if (locations) {
       const coordinates = Object.values(locations);
       yield put(actions.getCurrentCoordinates({ coordinates }));
+      beforeCoords = new Coordinate(coordinates[coordinates.length - 1]);
       isFirstTracking = false;
     }
     while (true) {

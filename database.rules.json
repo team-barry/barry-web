@@ -4,8 +4,35 @@
     ".write": false,
     "users": {
       "$uid": {
-        ".read": "$uid === auth.uid",
+        ".read": true,
         ".write": "$uid === auth.uid"
+      }
+    },
+    "bows": {
+      ".read": true,
+      ".write": true,
+      "geofire": {
+        ".read": true,
+        ".indexOn": ["g"],
+        "$key": {
+          ".write": true,
+          ".validate":
+            "newData.hasChildren(['g', 'l']) && newData.getPriority().length <= 22 && newData.getPriority().length > 0",
+          "g": {
+            ".validate": "newData.val() == newData.parent().getPriority()"
+          },
+          "l": {
+            "0": {
+              ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90"
+            },
+            "1": {
+              ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
       }
     }
   }

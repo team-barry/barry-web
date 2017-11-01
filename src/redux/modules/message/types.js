@@ -1,4 +1,10 @@
 export default {
   SHOW_MESSAGE: "SHOW_MESSAGE",
   HIDE_MESSAGE: "HIDE_MESSAGE",
+  CREATE_MESSAGE: "HANDLE_RAISE_ERROR",
+};
+
+export const messangerEvent = {
+  SHOW_MESSAGE: "SHOW_MESSAGE",
+  HIDE_MESSAGE: "HIDE_MESSAGE",
 };

@@ -9,16 +9,23 @@ const initialState = {
 
 export default handleActions(
   {
-    [actions.showMessage]: (state, action) => ({
-      ...state,
-      isShowing: true,
-      isError: action.error,
-      message: action.payload.message,
-    }),
+    [actions.showMessage]: (state, action) => {
+      console.log("dispatch showMessage");
+      return {
+        ...state,
+        isShowing: true,
+        isError: action.error,
+        message: action.payload.message,
+      };
+    },
     [actions.hideMessage]: (state, action) => ({
       ...state,
       isShowing: false,
     }),
+    [actions.createMessage]: (state, action) => {
+      console.log("dispatch createMessage");
+      return state;
+    },
   },
   initialState
 );

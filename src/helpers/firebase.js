@@ -27,6 +27,19 @@ export class FirebaseList {
     this._path = path;
   }
 
+  _setPath(key) {
+    if (!this._path && !key) {
+      return "/";
+    }
+    if (!this._path) {
+      return key;
+    }
+    if (!key) {
+      return this._path;
+    }
+    return `${this._path}/${key}`;
+  }
+
   get path() {
     return this._path;
   }
@@ -37,49 +50,33 @@ export class FirebaseList {
 
   push(key, value) {
     return new Promise((resolve, reject) => {
-      firebaseDb.ref(`${this._path}/${key}`).push(value, error => (error ? reject(error) : resolve()));
+      const uid = firebaseDb.ref().push().key;
+      console.log("push", this._setPath(key), uid);
+      firebaseDb.ref(`${this._setPath(key)}/${uid}`).set(value, error => (error ? reject(error) : resolve(uid)));
     });
   }
 
   remove(key) {
     return new Promise((resolve, reject) => {
-      firebaseDb.ref(`${this._path}/${key}`).remove(error => (error ? reject(error) : resolve()));
+      firebaseDb.ref(this._setPath(key)).remove(error => (error ? reject(error) : resolve()));
     });
   }
 
   set(key, value) {
     return new Promise((resolve, reject) => {
-      firebaseDb.ref(`${this._path}/${key}`).set(value, error => (error ? reject(error) : resolve()));
+      firebaseDb.ref(this._setPath(key)).set(value, error => (error ? reject(error) : resolve()));
     });
   }
 
   update(key, value) {
     return new Promise((resolve, reject) => {
-      firebaseDb.ref(`${this._path}/${key}`).update(value, error => (error ? reject(error) : resolve()));
+      firebaseDb.ref(this._setPath(key)).update(value, error => (error ? reject(error) : resolve()));
     });
   }
 
   get(key = null) {
-    let refPath;
-    if (!this._path) {
-      refPath = key;
-    } else {
-      refPath = key ? `${this._path}/${key}` : `${this._path}`;
-    }
-
-    console.log("get", refPath);
     return firebaseDb
-      .ref(refPath)
-      .once("value")
-      .then(snapshot => {
-        return snapshot.val();
-      });
-  }
-
-  getAbsKey(key) {
-    console.log("get with absolute key", key);
-    return firebaseDb
-      .ref(key)
+      .ref(this._setPath(key))
       .once("value")
       .then(snapshot => {
         return snapshot.val();
