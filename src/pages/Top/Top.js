@@ -15,18 +15,6 @@ class Top extends Component {
     handleLogin: PropTypes.func,
   };
 
-  componentWillMount() {
-    this.onChangeUser(this.props.user);
-  }
-
-  componentWillUpdate(nextProps) {
-    if (this.props.user !== nextProps.user) {
-      this.onChangeUser(nextProps.user);
-      return true;
-    }
-    return false;
-  }
-
   onClickStart = event => {
     // [TODO]
     // Add auth privider facebook
@@ -35,12 +23,6 @@ class Top extends Component {
       provider: google,
     };
     this.props.handleLogin(payload);
-  };
-
-  onChangeUser = user => {
-    if (user.isLogin()) {
-      this.props.history.push("/user");
-    }
   };
 
   render() {

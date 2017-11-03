@@ -22,9 +22,6 @@ class Guest extends Component {
 
   isAuthenticated(props) {
     const user = props.user;
-    if (user.needAuth()) {
-      return this.props.handleAuth();
-    }
     if (user.isLogging()) {
       return;
     }

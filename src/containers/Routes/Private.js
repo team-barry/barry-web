@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Route } from "react-router";
 import authActions from "redux/modules/auth/actions";
 import tackingActions from "redux/modules/tracking/actions";
+import { withRouter, Route } from "react-router";
 import Loading from "pages/Loading/Loading";
 
 class Private extends Component {
@@ -17,20 +17,22 @@ class Private extends Component {
   };
 
   componentWillMount() {
-    console.log("private component will mount");
+    this.backIfUserNoLogin(this.props);
+  }
 
-    this.isAuthenticated();
-    if (this.props.user.isLogin()) {
-      this.props.handleStartTracking({ user: this.props.user });
+  componentWillReceiveProps(nextProps) {
+    this.backIfUserNoLogin(nextProps);
+  }
+
+  backIfUserNoLogin(props) {
+    const { user } = props;
+    if (!user.isLogin()) {
+      props.history.replace("/");
     }
   }
 
-  isAuthenticated() {
-    return this.props.handleAuth();
-  }
-
   render() {
-    if (this.props.user.isLogging() || !this.props.isReady) {
+    if (!this.props.isReady) {
       return <Loading />;
     }
     return <Route {...this.props} />;
@@ -52,4 +54,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Private);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Private));

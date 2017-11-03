@@ -1,8 +1,8 @@
 import { call, put, takeLatest, all } from "redux-saga/effects";
 import { firebaseAuth, FirebaseList } from "helpers/firebase";
-import history from "helpers/history";
 import { UserUtil } from "redux/models/user";
 import actions from "./actions";
+import trackingActions from "redux/modules/tracking/actions";
 import types from "./types";
 
 const firebaseList = new FirebaseList("users");
@@ -20,9 +20,8 @@ function* handleLogin(action) {
     const user = UserUtil.fromAuth(authedUser);
 
     yield call([firebaseList, firebaseList.update], user.uid, user);
+    yield put(trackingActions.handleStartTracking({ user: user }));
     yield put(actions.login({ user: user }));
-
-    history.push("/user");
   } catch (e) {
     console.log(e);
     yield put(actions.login(new Error("LOGIN_ERROR")));
@@ -34,8 +33,6 @@ function* handleSignout(action) {
   try {
     yield call([firebaseAuth, firebaseAuth.signOut]);
     yield put(actions.signout());
-
-    history.push("/");
   } catch (e) {
     console.log(e);
     yield put(actions.signout(new Error("SIGNOUT_ERROR")));
@@ -48,7 +45,6 @@ function* handleAuth(action) {
     const auth = firebaseAuth.currentUser;
     if (!auth) {
       yield put(actions.signout(new Error("AUTH_ERROR")));
-      history.push("/");
       return;
     }
     const user = UserUtil.fromAuth(auth);
