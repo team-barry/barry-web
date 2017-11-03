@@ -4,6 +4,7 @@ const UserRecord = Record({
   uid: null,
   name: null,
   email: null,
+  display_name: null,
   logging: false,
   me: false,
 });
