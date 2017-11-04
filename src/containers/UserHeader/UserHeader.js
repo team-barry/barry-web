@@ -14,6 +14,7 @@ class UserHeader extends Component {
     user: PropTypes.object,
     handleSignout: PropTypes.func,
     toggleVisibility: PropTypes.func.isRequried,
+    visibleContent: PropTypes.bool.isRequired,
   };
 
   constructor() {
@@ -42,13 +43,21 @@ class UserHeader extends Component {
     this.props.handleSignout();
   };
 
+  iconWithToggleState = () => {
+    const { visibleContent } = this.props;
+    if (visibleContent) {
+      return "close";
+    }
+    return "content";
+  };
+
   render() {
     const { user } = this.props;
     return (
       <div>
         <Menu size="huge" compact={false} className="no-margin-bottom" style={{ margin: 0 }}>
           <Menu.Item onClick={this.props.toggleVisibility}>
-            <Icon name="content" size="large" />
+            <Icon name={this.iconWithToggleState()} size="large" />
           </Menu.Item>
           <Menu.Menu position="right">
             <Dropdown text={user.screenName} pointing className="link item">
