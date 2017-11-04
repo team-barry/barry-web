@@ -26,14 +26,6 @@ export default handleActions(
     [actions.signout]: (state, action) => ({
       user: new User(),
     }),
-    [actions.handleAuth]: (state, action) => ({
-      ...state,
-    }),
-    [actions.auth]: (state, action) => ({
-      user: new User({
-        ...action.payload.user,
-      }),
-    }),
   },
   initialState
 );

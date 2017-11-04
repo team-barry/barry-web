@@ -17,9 +17,19 @@ function* handleLogin(action) {
       const auth = yield call([firebaseAuth, firebaseAuth.signInWithPopup], provider);
       authedUser = auth.user;
     }
-    const user = UserUtil.fromAuth(authedUser);
+    let user = UserUtil.fromAuth(authedUser);
 
-    yield call([firebaseList, firebaseList.update], user.uid, user);
+    const userInfoPath = `${user.uid}/info`;
+    const userInfo = yield call([firebaseList, firebaseList.get], userInfoPath);
+    console.log("userinfo", userInfo);
+
+    if (userInfo) {
+      console.log("user has loged in");
+      user = userInfo;
+    } else {
+      // 新規登録
+      yield call([firebaseList, firebaseList.update], userInfoPath, user);
+    }
     yield put(trackingActions.handleStartTracking({ user: user }));
     yield put(actions.login({ user: user }));
   } catch (e) {
@@ -32,6 +42,7 @@ function* handleSignout(action) {
   console.log("handle signout called");
   try {
     yield call([firebaseAuth, firebaseAuth.signOut]);
+    yield put(trackingActions.handleStopTracking());
     yield put(actions.signout());
   } catch (e) {
     console.log(e);
@@ -39,26 +50,6 @@ function* handleSignout(action) {
   }
 }
 
-function* handleAuth(action) {
-  console.log("handle auth user called");
-  try {
-    const auth = firebaseAuth.currentUser;
-    if (!auth) {
-      yield put(actions.signout(new Error("AUTH_ERROR")));
-      return;
-    }
-    const user = UserUtil.fromAuth(auth);
-    yield put(actions.auth({ user: user }));
-  } catch (e) {
-    console.log(e);
-    yield put(actions.auth(new Error("AUTH_ERROR")));
-  }
-}
-
 export function* authSagas() {
-  yield all([
-    takeLatest(types.HANDLE_LOGIN, handleLogin),
-    takeLatest(types.HANDLE_SIGNOUT, handleSignout),
-    takeLatest(types.HANDLE_AUTH, handleAuth),
-  ]);
+  yield all([takeLatest(types.HANDLE_LOGIN, handleLogin), takeLatest(types.HANDLE_SIGNOUT, handleSignout)]);
 }

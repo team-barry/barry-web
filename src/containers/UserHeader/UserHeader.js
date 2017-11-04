@@ -40,10 +40,10 @@ class UserHeader extends Component {
   hundleSignout = event => {
     event.preventDefault();
     this.props.handleSignout();
-    this.props.handleStopTracking();
   };
 
   render() {
+    const { user } = this.props;
     return (
       <div>
         <Menu size="huge" compact={false} className="no-margin-bottom" style={{ margin: 0 }}>
@@ -51,7 +51,7 @@ class UserHeader extends Component {
             <Icon name="content" size="large" />
           </Menu.Item>
           <Menu.Menu position="right">
-            <Dropdown text={this.props.user.name} pointing className="link item">
+            <Dropdown text={user.screenName} pointing className="link item">
               <Dropdown.Menu>
                 <Dropdown.Item onClick={this.onOpenUserEditModal}>
                   <Icon name="setting" />
