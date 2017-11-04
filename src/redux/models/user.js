@@ -5,6 +5,7 @@ const UserRecord = Record({
   name: null,
   email: null,
   screen_name: null,
+  profile: null,
 });
 
 export default class User extends UserRecord {

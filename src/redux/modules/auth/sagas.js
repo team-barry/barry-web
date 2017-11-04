@@ -1,4 +1,4 @@
-import { call, put, takeLatest, all } from "redux-saga/effects";
+import { call, fork, put, takeLatest, all } from "redux-saga/effects";
 import { firebaseAuth, FirebaseList } from "helpers/firebase";
 import { UserUtil } from "redux/models/user";
 import actions from "./actions";
@@ -52,9 +52,12 @@ function* handleSignout(action) {
 
 function* handleEditUser(action) {
   console.log("handle edit user called");
+  console.log(action.payload);
   try {
     const { user, edited_user } = action.payload;
     const newUser = user.merge(edited_user).toJS();
+    const userInfoPath = `${user.uid}/info`;
+    yield fork([firebaseList, firebaseList.update], userInfoPath, newUser);
     yield put(actions.editUser({ user: newUser }));
   } catch (e) {
     console.log(e);
