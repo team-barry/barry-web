@@ -50,6 +50,22 @@ function* handleSignout(action) {
   }
 }
 
+function* handleEditUser(action) {
+  console.log("handle edit user called");
+  try {
+    const { user, edited_user } = action.payload;
+    const newUser = user.merge(edited_user).toJS();
+    yield put(actions.editUser({ user: newUser }));
+  } catch (e) {
+    console.log(e);
+    yield put(actions.editUser(new Error("EDIT_USER_ERROR")));
+  }
+}
+
 export function* authSagas() {
-  yield all([takeLatest(types.HANDLE_LOGIN, handleLogin), takeLatest(types.HANDLE_SIGNOUT, handleSignout)]);
+  yield all([
+    takeLatest(types.HANDLE_LOGIN, handleLogin),
+    takeLatest(types.HANDLE_SIGNOUT, handleSignout),
+    takeLatest(types.HANDLE_EDIT_USER, handleEditUser),
+  ]);
 }

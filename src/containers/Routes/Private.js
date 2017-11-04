@@ -9,7 +9,7 @@ import Loading from "pages/Loading/Loading";
 
 class Private extends Component {
   static PropTypes = {
-    user: PropTypes.object.isRequired,
+    auth: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
     isTracking: PropTypes.object.isRequired,
     isReady: PropTypes.object.isRequired,
@@ -25,8 +25,8 @@ class Private extends Component {
   }
 
   backIfUserNoLogin(props) {
-    const { user } = props;
-    if (!user.isLogin()) {
+    const { auth } = props;
+    if (!auth.logged_in) {
       props.history.replace("/");
     }
   }
@@ -41,7 +41,7 @@ class Private extends Component {
 
 const mapStateToProps = state => {
   return {
-    user: state.auth.user,
+    auth: state.auth,
     isTracking: state.tracking.isTracking,
     isReady: state.tracking.isReady,
   };

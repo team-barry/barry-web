@@ -8,7 +8,7 @@ import Loading from "pages/Loading/Loading";
 
 class Guest extends Component {
   static PropTypes = {
-    user: PropTypes.object.isRequired,
+    auth: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
   };
 
@@ -21,17 +21,18 @@ class Guest extends Component {
   }
 
   isAuthenticated(props) {
-    const user = props.user;
-    if (user.isLogging()) {
+    const { auth } = props;
+    if (auth.logging_in) {
       return;
     }
-    if (user.isLogin()) {
+    if (auth.logged_in) {
       props.history.replace("/user");
     }
   }
 
   render() {
-    if (this.props.user.isLogging()) {
+    const { auth } = this.props;
+    if (auth.logging_in) {
       return <Loading />;
     }
     return <Route {...this.props} />;
@@ -40,7 +41,7 @@ class Guest extends Component {
 
 const mapStateToProps = state => {
   return {
-    user: state.auth.user,
+    auth: state.auth,
   };
 };
 

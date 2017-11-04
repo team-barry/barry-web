@@ -5,22 +5,9 @@ const UserRecord = Record({
   name: null,
   email: null,
   screen_name: null,
-  logging: false,
-  me: false,
 });
 
 export default class User extends UserRecord {
-  isLogin() {
-    if (this.me && this.uid) {
-      return true;
-    }
-    return false;
-  }
-
-  isLogging() {
-    return this.logging;
-  }
-
   get screenName() {
     if (this.screen_name) {
       return this.screen_name;
