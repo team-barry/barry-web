@@ -1,10 +1,8 @@
 import React, { Component } from "react";
-import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Card, Feed } from "semantic-ui-react";
 import moment from "moment";
-import locationActions from "redux/modules/location/actions";
 import { DateFactory } from "helpers/date";
 import TrackingCard from "components/TrackingCard/TrackingCard";
 import "./TrackingCardList.css";
@@ -52,8 +50,4 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {};
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(TrackingCardList);
+export default connect(mapStateToProps)(TrackingCardList);
