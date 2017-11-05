@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import { Button, Header, Icon, Modal, Form } from "semantic-ui-react";
+import { Button, Header, Icon, Modal, Form, Image } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import authActions from "redux/modules/auth/actions";
+import Dropzone from "react-dropzone";
 
 class UserEditModal extends Component {
   static PropTypes = {
-    auth: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
     onOpen: PropTypes.func.inRequired,
     onClose: PropTypes.func.isRequried,
@@ -20,7 +20,20 @@ class UserEditModal extends Component {
     this.state = {
       screen_name: props.user.screenName,
       profile: props.user.profile,
+      icon: null,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { user } = nextProps;
+    if (this.props.user !== user) {
+      this.setState({
+        ...this.state,
+        screen_name: user.screenName,
+        profile: user.profile,
+        icon: null,
+      });
+    }
   }
 
   onClose = () => {
@@ -44,6 +57,7 @@ class UserEditModal extends Component {
       ...this.state,
       screen_name: user.screenName,
       profile: user.profile,
+      icon: null,
     });
     this.onClose();
   };
@@ -62,15 +76,46 @@ class UserEditModal extends Component {
     });
   };
 
+  onDropAccepted = file => {
+    console.log("onDropAccepted", file[file.length - 1]);
+    if (file && file[file.length - 1]) {
+      this.setState({
+        ...this.state,
+        icon: file[file.length - 1],
+      });
+    }
+  };
+
+  onDropRejected = file => {
+    // [TODO] エラーダイアログの表示
+    console.log("onDropRejected", file);
+  };
+
+  showIcon = () => {
+    const { icon } = this.state;
+    if (!icon) {
+      return null;
+    }
+    return <Image src={icon.preview} />;
+  };
+
   render() {
     const props = this.props;
     const { user } = props;
     const { screen_name, profile } = this.state;
     return (
       <Modal open={props.open} onOpen={props.onOpen} onClose={props.onClose} closeIcon>
-        <Header icon="setting" content="User Edit" />
+        <Header icon="setting" content="User Edit" multiple={false} />
         <Modal.Content>
           <Form>
+            <div className="field">
+              <label>Icon</label>
+              <div className="ui input">
+                <Dropzone accept="image/*" onDropAccepted={this.onDropAccepted} onDropRejected={this.onDropRejected}>
+                  {this.showIcon()}
+                </Dropzone>;
+              </div>
+            </div>
             <Form.Input label="Display Name" value={screen_name} onChange={this.onChangeScreenName} />
             <Form.Input label="Email" placeholder={user.email} disabled />
             <Form.TextArea
@@ -96,7 +141,6 @@ class UserEditModal extends Component {
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth,
     user: state.auth.user,
   };
 };
