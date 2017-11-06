@@ -2,17 +2,17 @@ import { createAction } from "redux-actions";
 import types from "./types";
 
 const handleLogin = createAction(types.HANDLE_LOGIN);
-const handleSignout = createAction(types.HANDLE_SIGNOUT);
-const handleAuth = createAction(types.HANDLE_AUTH);
 const login = createAction(types.LOGIN);
+const handleSignout = createAction(types.HANDLE_SIGNOUT);
 const signout = createAction(types.SIGNOUT);
-const auth = createAction(types.AUTH);
+const handleEditUser = createAction(types.HANDLE_EDIT_USER);
+const editUser = createAction(types.EDIT_USER);
 
 export default {
   handleLogin,
   login,
   handleSignout,
   signout,
-  handleAuth,
-  auth,
+  handleEditUser,
+  editUser,
 };

@@ -21,6 +21,7 @@ const firebaseConfig = {
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
 export const firebaseDb = firebase.database();
 export const firebaseAuth = firebase.auth();
+export const storage = firebase.storage();
 
 export class FirebaseList {
   constructor(path = null) {

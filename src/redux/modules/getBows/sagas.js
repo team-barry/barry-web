@@ -25,7 +25,7 @@ function subscribeBows(buffer) {
           const bow = bowSnap.val();
           firebaseDb
             .ref("users")
-            .child(bow.uid)
+            .child(`${bow.uid}/info`)
             .once("value", userSnap => {
               const user = userSnap.val();
               emitter(actions.addBow({ bow: Bow.newBowFromDB(bow, user) }));

@@ -4,20 +4,17 @@ const UserRecord = Record({
   uid: null,
   name: null,
   email: null,
-  logging: false,
-  me: false,
+  screen_name: null,
+  profile: null,
+  icon_url: null,
 });
 
 export default class User extends UserRecord {
-  isLogin() {
-    if (this.me && this.uid) {
-      return true;
+  get screenName() {
+    if (this.screen_name) {
+      return this.screen_name;
     }
-    return false;
-  }
-
-  isLogging() {
-    return this.logging;
+    return this.name;
   }
 }
 

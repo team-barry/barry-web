@@ -11,8 +11,6 @@ export default handleActions(
     [actions.handleGetBows]: (state, action) => ({ ...state }),
     [actions.getBows]: (state, action) => ({ ...state }),
     [actions.addBow]: (state, action) => {
-      console.log("addbow reducer");
-      console.log(state, action);
       const { bow } = action.payload;
       return {
         ...state,

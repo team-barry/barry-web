@@ -1,10 +1,9 @@
 {
   "rules": {
-    ".read": false,
+    ".read": true,
     ".write": false,
     "users": {
       "$uid": {
-        ".read": true,
         ".write": "$uid === auth.uid"
       }
     },
@@ -12,10 +11,8 @@
       ".read": true,
       ".write": true,
       "geofire": {
-        ".read": true,
         ".indexOn": ["g"],
         "$key": {
-          ".write": true,
           ".validate":
             "newData.hasChildren(['g', 'l']) && newData.getPriority().length <= 22 && newData.getPriority().length > 0",
           "g": {

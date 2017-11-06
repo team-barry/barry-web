@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Feed } from "semantic-ui-react";
-import { formatLatLng, formatDate } from "helpers/format";
+import { formatLatLng } from "helpers/format";
 import moment from "moment";
 import "./TrackingCard.css";
 

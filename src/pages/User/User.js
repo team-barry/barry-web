@@ -17,7 +17,7 @@ export default class User extends Component {
     const { visible } = this.state;
     return (
       <div className="page" style={style}>
-        <UserHeader toggleVisibility={this.toggleVisibility} />
+        <UserHeader visibleContent={this.state.visible} toggleVisibility={this.toggleVisibility} />
         <Sidebar.Pushable as={Segment}>
           <Sidebar as={Menu} animation="overlay" visible={visible} icon="labeled">
             <UserSidebar />

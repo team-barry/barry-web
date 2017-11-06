@@ -3,5 +3,9 @@
 }
 
 .not-having {
-  color: #EEEEEE;
+  color: #eeeeee;
+}
+
+.react-datepicker {
+  padding: 1px;
 }
