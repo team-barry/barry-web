@@ -1,11 +1,11 @@
 import { handleActions } from "redux-actions";
 import actions from "./actions";
 import { Coordinate } from "redux/models";
-import { List, Map } from "immutable";
+import { List } from "immutable";
 
 const initialState = {
   isReady: false,
-  isTracking: new Map(),
+  isTracking: false,
   trackedCoordinates: new List(),
 };
 

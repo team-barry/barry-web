@@ -1,5 +1,6 @@
 .sidebar {
   padding: 10px;
+  overflow-x: hidden;
 }
 
 .ui.left.sidebar,

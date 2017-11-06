@@ -42,12 +42,12 @@ class UserEditModal extends Component {
 
   onSaveButtonClick = () => {
     const { user } = this.props;
-    const { screen_name, profile } = this.state;
+    const { screen_name, profile, icon } = this.state;
     const edited_user = {
       screen_name,
       profile,
     };
-    this.props.handleEditUser({ user, edited_user });
+    this.props.handleEditUser({ user, edited_user, icon });
     this.onClose();
   };
 
@@ -93,8 +93,12 @@ class UserEditModal extends Component {
 
   showIcon = () => {
     const { icon } = this.state;
+    const { user } = this.props;
     if (!icon) {
-      return null;
+      if (!user.icon_url) {
+        return null;
+      }
+      return <Image src={user.icon_url} />;
     }
     return <Image src={icon.preview} />;
   };

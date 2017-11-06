@@ -6,6 +6,7 @@ const UserRecord = Record({
   email: null,
   screen_name: null,
   profile: null,
+  icon_url: null,
 });
 
 export default class User extends UserRecord {
