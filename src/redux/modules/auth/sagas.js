@@ -58,14 +58,14 @@ function* handleEditUser(action) {
     const { user, edited_user, icon } = action.payload;
 
     // upload user icon and get url
+    // [NOTE]
+    // 画像のアップデートを待ってからURLを取得を待っていて遅い
+    // できればアップデートはforkして，refのfullPathを取るだけにしたい
     let icon_url = user.icon_url;
     if (icon) {
       const storageUserIconRef = storageIconRef.child(`${user.uid}/${icon.name}`);
       const snapshot = yield call([storageUserIconRef, storageUserIconRef.put], icon);
-      icon_url = yield call([storageUserIconRef, storageUserIconRef.getDownloadURL]);
-
-      console.log("icon_url", icon_url);
-      console.log("snapshot", snapshot);
+      icon_url = yield call([snapshot.ref, snapshot.ref.getDownloadURL]);
     }
 
     const newUser = user.merge({ ...edited_user, icon_url }).toJS();
