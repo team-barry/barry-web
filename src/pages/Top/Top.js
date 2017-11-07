@@ -6,8 +6,7 @@ import { Button } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import authActions from "redux/modules/auth/actions";
 import style from "./Top.css";
-import firebase from "firebase";
-import { withRouter, Route } from "react-router";
+import { withRouter } from "react-router";
 
 class Top extends Component {
   static PropTypes = {
