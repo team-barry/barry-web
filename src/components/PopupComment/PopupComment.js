@@ -8,7 +8,6 @@ export default class PopupComment extends Component {
       <Card.Group className="comment-popup">
         <Card>
           <Card.Content>
-            <Image floated="right" size="mini" src="/assets/images/avatar/large/steve.jpg" />
             <Card.Header>{this.props.name}</Card.Header>
             <Card.Description>{this.props.value}</Card.Description>
           </Card.Content>
