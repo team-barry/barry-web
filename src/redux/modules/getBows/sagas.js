@@ -39,9 +39,9 @@ function subscribeBows(buffer) {
 
 function* handleGetBows(action) {
   try {
-    const { coordinate, radius } = action.payload;
+    const { center, radius } = action.payload;
     geoQuery.updateCriteria({
-      center: coordinate.getGeoLocationArray(),
+      center: center,
       radius: radius || 10.0,
     });
     yield put(actions.getBows());
