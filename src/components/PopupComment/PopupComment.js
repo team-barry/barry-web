@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Card, Image } from "semantic-ui-react";
+import { Card } from "semantic-ui-react";
 import "./PopupComment.css";
 
 export default class PopupComment extends Component {
