@@ -43,6 +43,9 @@ export default handleActions(
       }),
       editing: false,
     }),
+    [actions.failedLoginFlow]: (state, action) => ({
+      ...initialState,
+    }),
   },
   initialState
 );

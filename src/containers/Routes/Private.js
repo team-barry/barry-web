@@ -3,7 +3,6 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import authActions from "redux/modules/auth/actions";
-import tackingActions from "redux/modules/tracking/actions";
 import { withRouter, Route } from "react-router";
 import Loading from "pages/Loading/Loading";
 
@@ -13,26 +12,34 @@ class Private extends Component {
     history: PropTypes.object.isRequired,
     isTracking: PropTypes.object.isRequired,
     isReady: PropTypes.object.isRequired,
-    handleStartTracking: PropTypes.func.isRequired,
+    handleLogin: PropTypes.func.isRequired,
   };
 
   componentWillMount() {
-    this.backIfUserNoLogin(this.props);
+    this.authenticate(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
     this.backIfUserNoLogin(nextProps);
   }
 
-  backIfUserNoLogin(props) {
+  authenticate = props => {
     const { auth } = props;
     if (!auth.logged_in) {
+      this.props.handleLogin();
+    }
+  };
+
+  backIfUserNoLogin = props => {
+    const { auth } = props;
+    if (!auth.logging_in && !auth.logged_in) {
       props.history.replace("/");
     }
-  }
+  };
 
   render() {
-    if (!this.props.isReady) {
+    const { auth, isReady } = this.props;
+    if (!auth.logged_in || !isReady) {
       return <Loading />;
     }
     return <Route {...this.props} />;
@@ -50,7 +57,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     ...bindActionCreators(authActions, dispatch),
-    ...bindActionCreators(tackingActions, dispatch),
   };
 };
 

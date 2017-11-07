@@ -7,6 +7,7 @@ const handleSignout = createAction(types.HANDLE_SIGNOUT);
 const signout = createAction(types.SIGNOUT);
 const handleEditUser = createAction(types.HANDLE_EDIT_USER);
 const editUser = createAction(types.EDIT_USER);
+const failedLoginFlow = createAction(types.FAILED_LOGIN_FLOW);
 
 export default {
   handleLogin,
@@ -15,4 +16,5 @@ export default {
   signout,
   handleEditUser,
   editUser,
+  failedLoginFlow,
 };

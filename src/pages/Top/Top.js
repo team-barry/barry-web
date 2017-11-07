@@ -7,22 +7,20 @@ import PropTypes from "prop-types";
 import authActions from "redux/modules/auth/actions";
 import style from "./Top.css";
 import firebase from "firebase";
+import { withRouter, Route } from "react-router";
 
 class Top extends Component {
   static PropTypes = {
     user: PropTypes.object,
     message: PropTypes.object,
     handleLogin: PropTypes.func,
+    history: PropTypes.object.isRequired,
   };
 
   onClickStart = event => {
     // [TODO]
     // Add auth privider facebook
-    const google = new firebase.auth.GoogleAuthProvider();
-    const payload = {
-      provider: google,
-    };
-    this.props.handleLogin(payload);
+    this.props.history.push("/user");
   };
 
   render() {
@@ -55,4 +53,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Top);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Top));

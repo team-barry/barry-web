@@ -20,7 +20,6 @@ export function initTracking(user) {
 
 function* write(context, method, ...params) {
   try {
-    console.log("write?", context, params);
     yield call([context, method], ...params);
   } catch (e) {
     console.log(e);
