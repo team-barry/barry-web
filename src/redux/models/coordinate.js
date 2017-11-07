@@ -25,6 +25,14 @@ export default class Coordinate extends CoordinateRecord {
     return false;
   }
 
+  get lat() {
+    return this.latitude;
+  }
+
+  get lng() {
+    return this.longitude;
+  }
+
   // [NOTE]
   // React-Mapboxは[longitude, latitude]の順で指定されているため
   // こちらのメソッドを仕様する

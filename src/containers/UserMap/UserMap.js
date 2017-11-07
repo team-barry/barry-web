@@ -12,6 +12,7 @@ import styles from "./UserMap.css";
 import pulseCircleStyles from "./PulseCircle.css";
 import markerCircleStyles from "./markerCircle.css";
 import { DateFactory } from "helpers/date";
+import { getLatLngArray, isInnerBounds } from "helpers/geoutils";
 import PopupComment from "components/PopupComment/PopupComment";
 import "mapbox-gl/dist/mapbox-gl.css";
 import GeoFire from "geofire";
@@ -32,16 +33,18 @@ class UserMap extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      zoom: 13,
-      distance: 10,
       viewport: props.current.getLocationArray(),
+      zoom: 15,
+      bowBounds: null,
+      currentBounds: null,
+      currentCenter: null,
     };
   }
 
   static PropTypes = {
     user: PropTypes.object.isRequired,
     viewport: PropTypes.array.isRequired,
-    current: PropTypes.array.isRequired,
+    current: PropTypes.object.isRequired,
     coordinates: PropTypes.object.isRequired,
     getSelectedCoordinates: PropTypes.func.isRequired,
     createMessage: PropTypes.func.isRequired,
@@ -50,7 +53,7 @@ class UserMap extends Component {
 
   componentDidMount() {
     this.props.handleGetBows({
-      coordinate: this.props.current,
+      center: getLatLngArray(this.props.current),
     });
   }
 
@@ -60,16 +63,45 @@ class UserMap extends Component {
     // 重要度などでコメントの取得のフィルタリングを行うことで
     // コメントの取得量を制限したい
     if (nextState.zoom < this.state.zoom && nextState.zoom <= minZoomParam) {
-      this.props.createMessage(new Error("MIN_ZOOM_ERROR"));
+      return this.props.createMessage(new Error("MIN_ZOOM_ERROR"));
     }
 
-    if (this.state.distance < nextState.distance) {
-      this.props.handleGetBows({
-        coordinate: this.props.current,
-        radius: nextState.distance,
+    // [TODO]
+    // コメントの取得条件：bowboundsの領域が広がった場合，もしくは，bowbounds外にcenterがあるとき
+    if (!nextState.bowBounds && nextState.currentBounds) {
+      return this.setState({
+        ...nextState,
+        bowBounds: nextState.currentBounds,
       });
+    } else if (!nextState.bowBounds) {
+      return;
+    }
+
+    const bounds = nextState.bowBounds;
+    const sw = getLatLngArray(bounds.getSouthWest());
+    const ne = getLatLngArray(bounds.getNorthEast());
+    const center = getLatLngArray(nextState.currentCenter);
+    const radius = GeoFire.distance(sw, ne) / 2.0;
+
+    if (this.state.zoom - nextState.zoom > 0) {
+      return this.getBowsState(nextState, center, radius);
+    }
+    if (!isInnerBounds(sw, ne, center)) {
+      return this.getBowsState(nextState, center, radius);
     }
   }
+
+  getBowsState = (nextState, center, radius) => {
+    console.log("get bow-wows");
+    this.props.handleGetBows({
+      center: center,
+      radius: radius,
+    });
+    this.setState({
+      ...nextState,
+      bowBounds: nextState.currentBounds,
+    });
+  };
 
   // 移動ボタンを押すと現在地に移動する
   hundleToMoveCurrentLocation = event => {
@@ -106,14 +138,11 @@ class UserMap extends Component {
   };
 
   onMoveEnd = (map, event) => {
-    console.log("call moveEnd event");
-    const bounds = map.getBounds();
-    const zoom = map.getZoom();
-    const distance = GeoFire.distance([bounds._sw.lat, bounds._sw.lng], [bounds._ne.lat, bounds._ne.lng]);
     this.setState({
       ...this.state,
-      zoom,
-      distance,
+      zoom: map.getZoom(),
+      currentBounds: map.getBounds(),
+      currentCenter: map.getCenter(),
     });
   };
 
