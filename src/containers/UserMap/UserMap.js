@@ -130,7 +130,7 @@ class UserMap extends Component {
     const popupBowsMap = bows.map(v => {
       return (
         <Popup key={v.bow_id} coordinates={v.coordinate.getLocationArray()} anchor="bottom">
-          <PopupComment name={v.user.screenName} value={v.comment} />
+          <PopupComment bow={v} />
         </Popup>
       );
     });

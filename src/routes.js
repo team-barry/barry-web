@@ -7,7 +7,7 @@ import history from "helpers/history";
 const routes = () => (
   <Router history={history}>
     <Switch>
-      <PrivateRoute exact path="/user" component={UserPage} />
+      <PrivateRoute exact path="/tracking" component={UserPage} />
       <Route component={TopPage} />
     </Switch>
   </Router>

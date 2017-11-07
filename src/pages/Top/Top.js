@@ -19,7 +19,7 @@ class Top extends Component {
   onClickStart = event => {
     // [TODO]
     // Add auth privider facebook
-    this.props.history.push("/user");
+    this.props.history.push("/tracking");
   };
 
   render() {
