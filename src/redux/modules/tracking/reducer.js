@@ -37,10 +37,6 @@ export default handleActions(
       trackedCoordinates: state.trackedCoordinates.push(new Coordinate(action.payload.coordinate)),
       isReady: true,
     }),
-    [actions.ready]: (state, action) => ({
-      ...state,
-      isReady: true,
-    }),
   },
   initialState
 );
