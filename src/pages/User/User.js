@@ -7,23 +7,47 @@ export default class User extends Component {
   constructor() {
     super();
     this.state = {
-      visible: true,
+      visibles: {
+        sidebar: true,
+        bows: true,
+      },
     };
   }
 
-  toggleVisibility = () => this.setState({ visible: !this.state.visible });
+  toggles = () => {
+    return {
+      sidebar: () => {
+        this.setState({
+          ...this.state,
+          visibles: {
+            ...this.state.visibles,
+            sidebar: !this.state.visibles.sidebar,
+          },
+        });
+      },
+      bows: () => {
+        this.setState({
+          ...this.state,
+          visibles: {
+            ...this.state.visibles,
+            bows: !this.state.visibles.bows,
+          },
+        });
+      },
+    };
+  };
 
   render() {
-    const { visible } = this.state;
+    const { visibles } = this.state;
     return (
       <div className="page" style={style}>
-        <UserHeader visibleContent={this.state.visible} toggleVisibility={this.toggleVisibility} />
+        <UserHeader visibles={visibles} toggles={this.toggles()} />
         <Sidebar.Pushable as={Segment}>
-          <Sidebar as={Menu} animation="overlay" visible={visible} icon="labeled">
+          <Sidebar as={Menu} animation="overlay" visible={visibles.sidebar} icon="labeled">
             <UserSidebar />
           </Sidebar>
           <Sidebar.Pusher className="main">
-            <UserMap />
+            <UserMap visibleBows={visibles.bows} />
           </Sidebar.Pusher>
         </Sidebar.Pushable>
       </div>

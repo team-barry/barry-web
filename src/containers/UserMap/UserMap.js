@@ -49,6 +49,7 @@ class UserMap extends Component {
     getSelectedCoordinates: PropTypes.func.isRequired,
     createMessage: PropTypes.func.isRequired,
     handleGetBows: PropTypes.func.isRequired,
+    visibleBows: PropTypes.bool.isRequired,
   };
 
   componentDidMount() {
@@ -148,7 +149,7 @@ class UserMap extends Component {
 
   render() {
     const markers = this.generatePositions();
-    const comments = this.generateComments();
+    const comments = this.props.visibleBows ? this.generateComments() : [];
     const mapDesign = "mapbox://styles/mapbox/streets-v9";
     return (
       <div className="map" style={styles}>

@@ -13,8 +13,8 @@ class UserHeader extends Component {
   static PropTypes = {
     user: PropTypes.object,
     handleSignout: PropTypes.func,
-    toggleVisibility: PropTypes.func.isRequried,
-    visibleContent: PropTypes.bool.isRequired,
+    toggles: PropTypes.object.isRequried,
+    visibles: PropTypes.object.isRequired,
   };
 
   constructor() {
@@ -43,21 +43,32 @@ class UserHeader extends Component {
     this.props.handleSignout();
   };
 
-  iconWithToggleState = () => {
-    const { visibleContent } = this.props;
-    if (visibleContent) {
-      return "close";
+  iconColorWithToggleSidebar = () => {
+    const visibleSidebar = this.props.visibles.sidebar;
+    if (!visibleSidebar) {
+      return "black";
     }
-    return "content";
+    return "blue";
+  };
+
+  iconColorWithToggleBows = () => {
+    const visibleBows = this.props.visibles.bows;
+    if (!visibleBows) {
+      return "black";
+    }
+    return "blue";
   };
 
   render() {
-    const { user } = this.props;
+    const { user, toggles } = this.props;
     return (
       <div>
         <Menu size="huge" compact={false} className="no-margin-bottom" style={{ margin: 0 }}>
-          <Menu.Item onClick={this.props.toggleVisibility}>
-            <Icon name={this.iconWithToggleState()} size="large" />
+          <Menu.Item onClick={toggles.sidebar}>
+            <Icon name="content" size="large" color={this.iconColorWithToggleSidebar()} />
+          </Menu.Item>
+          <Menu.Item onClick={toggles.bows}>
+            <Icon name="comment outline" size="large" color={this.iconColorWithToggleBows()} />
           </Menu.Item>
           <Menu.Menu position="right">
             <Dropdown text={user.screenName} pointing className="link item">
