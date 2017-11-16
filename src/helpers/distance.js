@@ -14,16 +14,4 @@ const isMove = (before, current) => {
   return false;
 };
 
-const setNextTime = (isMovePosition, nextTime) => {
-  const TIME = 10000;
-  if (!nextTime) {
-    return TIME;
-  }
-
-  if (!isMovePosition) {
-    return nextTime * 2;
-  }
-  return TIME;
-};
-
-export { isMove, setNextTime };
+export { isMove };
