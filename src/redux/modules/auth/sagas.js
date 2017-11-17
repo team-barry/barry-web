@@ -29,29 +29,57 @@ const authUserWithSession = provider => {
     });
 };
 
+const getOptionsInLocalStorage = () => {
+  let options = {
+    visibles: {},
+  };
+  if (localStorage.visibles) {
+    options = {
+      ...options,
+      visibles: JSON.parse(localStorage.visibles),
+    };
+  }
+  return options;
+};
+
+function* loginWithFirebase(provider) {
+  let authedUser = yield call(getUserStatus);
+  if (!authedUser) {
+    const auth = yield call(authUserWithSession, provider);
+    authedUser = auth.user;
+  }
+  return UserUtil.fromAuth(authedUser);
+}
+
 function* handleLogin(action) {
   console.log("handle login called");
   try {
     const provider = new firebase.auth.GoogleAuthProvider();
-
-    let authedUser = yield call(getUserStatus);
-    if (!authedUser) {
-      const auth = yield call(authUserWithSession, provider);
-      authedUser = auth.user;
+    let user = null;
+    if (!localStorage.uid) {
+      user = yield call(loginWithFirebase, provider);
+      localStorage.uid = user.uid;
+    } else {
+      yield fork(loginWithFirebase, provider);
+      user = {
+        uid: localStorage.uid,
+      };
     }
-    let user = UserUtil.fromAuth(authedUser);
 
     const userInfoPath = `${user.uid}/info`;
     const userInfo = yield call([firebaseList, firebaseList.get], userInfoPath);
 
-    if (userInfo) {
-      user = userInfo;
-    } else {
-      // 新規登録
+    if (!userInfo && !localStorage.uid) {
       yield call([firebaseList, firebaseList.update], userInfoPath, user);
+    } else if (!userInfo && localStorage.uid) {
+      throw new Error("Invalid localStorage value");
+    } else {
+      user = userInfo;
     }
     yield put(trackingActions.handleStartTracking({ user: user }));
-    yield put(actions.login({ user: user }));
+
+    const options = getOptionsInLocalStorage();
+    yield put(actions.login({ user: user, visibles: options.visibles }));
   } catch (e) {
     console.log(e);
     yield put(actions.failedLoginFlow(new Error("LOGIN_ERROR")));

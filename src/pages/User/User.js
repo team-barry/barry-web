@@ -1,38 +1,52 @@
 import React, { Component } from "react";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import authActions from "redux/modules/auth/actions";
 import style from "./User.css";
 import { UserHeader, UserMap, UserSidebar } from "containers";
 import { Sidebar, Segment, Menu } from "semantic-ui-react";
 
-export default class User extends Component {
-  constructor() {
-    super();
+class User extends Component {
+  constructor(props) {
+    super(props);
+
+    console.log("constructor", props.visibles);
     this.state = {
       visibles: {
-        sidebar: true,
-        bows: true,
+        ...props.visibles,
       },
     };
   }
 
+  static PropTypes = {
+    visibles: PropTypes.object.isRequired,
+    changeOptions: PropTypes.func.isRequired,
+  };
+
   toggles = () => {
     return {
       sidebar: () => {
+        const visibles = {
+          ...this.state.visibles,
+          sidebar: !this.state.visibles.sidebar,
+        };
         this.setState({
           ...this.state,
-          visibles: {
-            ...this.state.visibles,
-            sidebar: !this.state.visibles.sidebar,
-          },
+          visibles,
         });
+        this.props.changeOptions({ visibles: visibles });
       },
       bows: () => {
+        const visibles = {
+          ...this.state.visibles,
+          bows: !this.state.visibles.bows,
+        };
         this.setState({
           ...this.state,
-          visibles: {
-            ...this.state.visibles,
-            bows: !this.state.visibles.bows,
-          },
+          visibles,
         });
+        this.props.changeOptions({ visibles: visibles });
       },
     };
   };
@@ -54,3 +68,17 @@ export default class User extends Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    visibles: state.auth.visibles,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    ...bindActionCreators(authActions, dispatch),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(User);

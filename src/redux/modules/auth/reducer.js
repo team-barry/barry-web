@@ -8,6 +8,7 @@ const initialState = {
   logged_in: false,
   editing: false,
   uid: "",
+  visibles: {},
 };
 
 export default handleActions(
@@ -25,6 +26,9 @@ export default handleActions(
       logging_in: false,
       logged_in: true,
       uid: action.payload.user.uid,
+      visibles: {
+        ...action.payload.visibles,
+      },
     }),
     [actions.handleSignout]: (state, action) => ({
       ...state,
@@ -46,6 +50,14 @@ export default handleActions(
     [actions.failedLoginFlow]: (state, action) => ({
       ...initialState,
     }),
+    [actions.changeOptions]: (state, action) => {
+      const { visibles } = action.payload;
+      console.log("visibles", visibles);
+      if (visibles) {
+        localStorage.visibles = JSON.stringify(visibles);
+      }
+      return state;
+    },
   },
   initialState
 );
