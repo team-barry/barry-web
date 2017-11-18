@@ -54,25 +54,13 @@ function* loginWithFirebase(provider) {
 function* handleLogin(action) {
   console.log("handle login called");
   try {
-    const provider = new firebase.auth.GoogleAuthProvider();
     let user = null;
-    if (!localStorage.uid) {
-      user = yield call(loginWithFirebase, provider);
-      localStorage.uid = user.uid;
-    } else {
-      yield fork(loginWithFirebase, provider);
-      user = {
-        uid: localStorage.uid,
-      };
-    }
+    const provider = new firebase.auth.GoogleAuthProvider();
+    user = yield call(loginWithFirebase, provider);
 
-    const userInfoPath = `${user.uid}/info`;
-    const userInfo = yield call([firebaseList, firebaseList.get], userInfoPath);
-
-    if (!userInfo && !localStorage.uid) {
-      yield call([firebaseList, firebaseList.update], userInfoPath, user);
-    } else if (!userInfo && localStorage.uid) {
-      throw new Error("Invalid localStorage value");
+    const userInfo = yield call([firebaseList, firebaseList.get], `${user.uid}/info`);
+    if (!userInfo) {
+      yield call([firebaseList, firebaseList.update], `${user.uid}/info`, user);
     } else {
       user = userInfo;
     }
