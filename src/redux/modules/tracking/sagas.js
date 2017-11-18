@@ -9,6 +9,9 @@ import { List } from "immutable";
 import { Coordinate } from "redux/models";
 
 const firebaseList = new FirebaseList();
+
+// [TODO]
+// Global変数を使いたくない
 let lastCoordinate = null;
 
 export function initTracking(user) {
@@ -76,20 +79,20 @@ function* subscribeTrackingSagas() {
 
     while (true) {
       const action = yield take(channel);
-
-      yield put(action);
       if (!action.payload || !action.payload.coordinate) {
-        return;
+        break;
       }
       const currentCoorinate = action.payload.coordinate;
 
       if (!lastCoordinate) {
         yield fork(updateData, `dates`, { [DateFactory.today()]: true });
         yield fork(pushData, `locations/${DateFactory.today()}`, currentCoorinate);
-        lastCoordinate = action.payload.coordinate;
+        yield put(action);
+        lastCoordinate = currentCoorinate;
       } else if (isMove(currentCoorinate, lastCoordinate)) {
         yield fork(pushData, `locations/${DateFactory.today()}`, currentCoorinate);
-        lastCoordinate = action.payload.coordinate;
+        yield put(action);
+        lastCoordinate = currentCoorinate;
       }
     }
   } catch (e) {
@@ -108,7 +111,7 @@ export function* triggerTracking() {
     const action = yield take(types.HANDLE_START_TRACKING);
     if (isInitial) {
       initTracking(action.payload.user);
-      yield fork(getCurrentCoordinates);
+      yield call(getCurrentCoordinates);
     }
     const bgSyncTask = yield fork(subscribeTrackingSagas);
     yield take(types.HANDLE_STOP_TRACKING);
