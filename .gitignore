@@ -23,3 +23,5 @@ yarn-error.log*
 # firebasde
 .firebaserc
 firebase-debug.log
+package-lock.json
+.firebase/hosting.0.cache
