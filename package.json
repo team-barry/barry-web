@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "firebase-admin": "^6.0.0",
+    "firebase-functions": "^2.0.5",
     "geofire": "^4.1.2",
     "history": "^4.6.3",
     "i18next": "^9.0.0",
