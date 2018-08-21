@@ -1,6 +1,7 @@
 import { call, fork, put, takeLatest, all } from "redux-saga/effects";
 import firebase from "firebase";
 import { FirebaseList, storage } from "helpers/firebase";
+import isMobile from "helpers/is_mobile";
 import { UserUtil } from "redux/models/user";
 import actions from "./actions";
 import trackingActions from "redux/modules/tracking/actions";
@@ -25,7 +26,11 @@ const authUserWithSession = provider => {
     .auth()
     .setPersistence(firebase.auth.Auth.Persistence.SESSION)
     .then(() => {
-      return firebase.auth().signInWithPopup(provider);
+      if (isMobile.any()) {
+        return firebase.auth().signInWithRedirect(provider);
+      } else {
+        return firebase.auth().signInWithPopup(provider);
+      }
     });
 };
 
